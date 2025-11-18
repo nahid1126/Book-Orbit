@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -74,42 +73,50 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = null,
-                        modifier = Modifier.height(120.dp)
+                        modifier = Modifier
+                            .height(200.dp)
+                            .padding(AppConstants.APP_MARGIN.dp)
                     )
-                    Spacer(modifier = Modifier.height(AppConstants.APP_MARGIN.dp))
-
                     if (!state.isLoading) {
-                        OutlinedButton(
-                            onClick = {
-                                val gso =
-                                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                        .requestIdToken(AppConstants.WEB_CLIENT_ID)
-                                        .requestEmail()
-                                        .build()
-
-                                val client = GoogleSignIn.getClient(context, gso)
-                                client.signOut()
-                                launcher.launch(client.signInIntent)
-                            },
-                            border = BorderStroke(1.dp, Black),
-                            modifier = Modifier.fillMaxWidth(.80f)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = 40.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.icons_google),
-                                tint = Color.Unspecified,
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = AppConstants.APP_MARGIN.dp)
-                            )
-                            Text("Continue With Google")
+                            OutlinedButton(
+                                onClick = {
+                                    val gso =
+                                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                            .requestIdToken(AppConstants.WEB_CLIENT_ID)
+                                            .requestEmail()
+                                            .build()
+
+                                    val client = GoogleSignIn.getClient(context, gso)
+                                    client.signOut()
+                                    launcher.launch(client.signInIntent)
+                                },
+                                border = BorderStroke(1.dp, Black),
+                                modifier = Modifier.fillMaxWidth(.80f)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.icons_google),
+                                    tint = Color.Unspecified,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = AppConstants.APP_MARGIN.dp)
+                                )
+                                Text("Continue With Google")
+                            }
                         }
 
                     }
