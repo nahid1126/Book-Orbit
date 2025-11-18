@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1095937701626",
+    "project_id": "book-orbit-d2fb3",
+    "storage_bucket": "book-orbit-d2fb3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095937701626:android:de186f286b3276d53c3b43",
+        "android_client_info": {
+          "package_name": "com.nahid.book_orbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1095937701626-j4tdb792l2g5akfrlf0i68edjl9mseg6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nahid.book_orbit",
+            "certificate_hash": "c35db6c5cfe09691fc0a1891f1856b3b4c10bd3f"
+          }
+        },
+        {
+          "client_id": "1095937701626-k1f0uh0ipege69uq45gqeh7pa6ckflig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjOSHau2ojKtdFa2rFjUdmdshPb5bL0IM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1095937701626-k1f0uh0ipege69uq45gqeh7pa6ckflig.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
