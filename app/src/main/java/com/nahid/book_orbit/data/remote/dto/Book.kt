@@ -3,12 +3,11 @@ package com.nahid.book_orbit.data.remote.dto
 data class Book(
     val id: String = "",
     val title: String = "",
-    val author: String = "",
-    val description: String = "",
-    val coverUrl: String = "",
+    val writer: String = "",
+    val coverImage: String = "",
     val pdfUrl: String = "",
-    val category: String = "",
-    val price: Double = 0.0,
+    val price: Int = 0,
     val isFree: Boolean = false,
+    val users: List<String>? = null,
     val uploadedAt: Long = System.currentTimeMillis(),
 )

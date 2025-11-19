@@ -2,8 +2,10 @@ package com.nahid.book_orbit.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.remote.dto.Book
 import com.nahid.book_orbit.domain.repository.BookRepository
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -11,13 +13,16 @@ class BookRepositoryImpl(
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth
 ):BookRepository {
-    override suspend fun getAllBooks(): List<Book> = suspendCoroutine { cont ->
-        db.collection("books").get()
-            .addOnSuccessListener { snap ->
-                val list = snap.documents.mapNotNull { it.toObject(Book::class.java) }
-                cont.resume(list)
-            }
-            .addOnFailureListener { cont.resume(emptyList()) }
+    override suspend fun getAllBooks(): Results<List<Book>> {
+        return try {
+            val books = db.collection("books")
+                .get()
+                .await()
+                .toObjects(Book::class.java)
+            Results.Success(books)
+        } catch (e: Exception) {
+            Results.Error(e)
+        }
     }
 
     override suspend fun isBookPurchased(userId: String, bookId: String): Boolean =

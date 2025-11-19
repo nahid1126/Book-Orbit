@@ -1,17 +1,19 @@
 package com.nahid.book_orbit.ui.presentation.home
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.nahid.book_orbit.core.utils.Results
+import com.nahid.book_orbit.data.remote.dto.Book
+import com.nahid.book_orbit.domain.repository.BookRepository
 import kotlinx.coroutines.launch
 
-class HomeScreenViewModel() : ViewModel() {
-    private val _uiState = MutableStateFlow(HomeScreenUiState())
-
-    val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
+class HomeScreenViewModel(private val bookRepository: BookRepository) : ViewModel() {
+    var uiState: HomeScreenUiState by mutableStateOf(HomeScreenUiState())
+        private set
 
 
     init {
@@ -21,7 +23,7 @@ class HomeScreenViewModel() : ViewModel() {
     }
 
     fun updateUiState(uiState: HomeScreenUiState) {
-        _uiState.value = uiState
+        this.uiState = uiState
     }
 
 
@@ -37,6 +39,26 @@ class HomeScreenViewModel() : ViewModel() {
         return percent.toInt()
     }
 
+    fun getAllBooks() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            try {
+                val books = bookRepository.getAllBooks()
+                uiState = when (books) {
+                    is Results.Error -> {
+                        uiState.copy(isLoading = false, exception = books.exception)
+                    }
+
+                    is Results.Success -> {
+                        uiState.copy(isLoading = false, books = books.data)
+                    }
+                }
+            } catch (e: Exception) {
+                uiState = uiState.copy(isLoading = false, exception = e)
+            }
+        }
+    }
+
 
 
 }
@@ -46,4 +68,5 @@ data class HomeScreenUiState(
     val token: String? = null,
     val exception: Exception? = null,
     val showExitDialog: Boolean = false,
+    val books: List<Book> = emptyList(),
 )

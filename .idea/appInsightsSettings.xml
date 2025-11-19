@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.nahid.book_orbit" />
+                  <option name="mobileSdkAppId" value="1:1095937701626:android:de186f286b3276d53c3b43" />
+                  <option name="projectId" value="book-orbit-d2fb3" />
+                  <option name="projectNumber" value="1095937701626" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

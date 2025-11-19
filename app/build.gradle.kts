@@ -109,4 +109,6 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.analytics)
 
+    implementation(libs.coil.compose)
+
 }

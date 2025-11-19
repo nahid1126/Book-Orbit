@@ -79,8 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$USER_HOME$/Downloads/eBoi.png" />
-                                                <entry key="scalingPercent" value="48" />
+                                                <entry key="imagePath" value="$USER_HOME$/Downloads/logo_book_orbit.png" />
+                                                <entry key="scalingPercent" value="85" />
                                               </map>
                                             </option>
                                           </PersistentState>
