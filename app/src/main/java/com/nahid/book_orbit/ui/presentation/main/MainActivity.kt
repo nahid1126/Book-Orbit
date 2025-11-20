@@ -8,23 +8,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.SystemUpdate
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.filled.Diamond
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -39,10 +38,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -152,79 +154,94 @@ class MainActivity : ComponentActivity() {
                         titleContentColor = ToolbarTextColor
                     ),
                     actions = {
-                        if ((currentRoute ?: "").contains(
-                                Destinations.Home.toString(),
-                                ignoreCase = true
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(end = (AppConstants.APP_MARGIN * 2).dp)
                         ) {
-                            Row {
-
-                                Box {
-                                    IconButton(onClick = { expanded = !expanded }) {
-                                        Icon(
-                                            Icons.Default.MoreVert,
-                                            contentDescription = null,
-                                            tint = White
-                                        )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(Destinations.BuyGems)
                                     }
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("Update") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    Icons.Outlined.SystemUpdate,
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            onClick = {
-                                                expanded = !expanded
-                                                viewModel.updateApp(context)
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Logout") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    Icons.Outlined.Logout,
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            onClick = {
-                                                expanded = !expanded
-                                                viewModel.updateUiState(
-                                                    uiState.copy(
-                                                        showLogoutDialog = true
-                                                    )
-                                                )
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-
-
-                        } else if ((currentRoute?.contains(
-                                "FarmerDetails"
-                            ) == true)
-                        ) {
-                            IconButton(onClick = {
-                                navController.navigate(Destinations.Home) {
-                                    popUpTo(Destinations.Home) {
-                                        inclusive = true
-                                    }
-                                    launchSingleTop = true
-                                }
-                            }) {
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(50)
+                                    )
+                                    .background(
+                                        color = White,
+                                        shape = RoundedCornerShape(50)
+                                    )
+                                    .clip(RoundedCornerShape(50))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
                                 Icon(
-                                    Icons.Default.Home,
-                                    contentDescription = null,
-                                    tint = White
+                                    Icons.Default.Diamond,
+                                    contentDescription = "Diamonds",
+                                    tint = Color.Red,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+                                Text(
+                                    text = "200",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
                                 )
                             }
-                        }
+
+                            /* if ((currentRoute ?: "").contains(
+                                     Destinations.Home.toString(),
+                                     ignoreCase = true
+                                 )
+                             ) {
+                                 Box {
+                                     IconButton(onClick = { expanded = !expanded }) {
+                                         Icon(
+                                             Icons.Default.MoreVert,
+                                             contentDescription = null,
+                                             tint = White
+                                         )
+                                     }
+                                     DropdownMenu(
+                                         expanded = expanded,
+                                         onDismissRequest = { expanded = false }
+                                     ) {
+                                         DropdownMenuItem(
+                                             text = { Text("Update") },
+                                             leadingIcon = {
+                                                 Icon(
+                                                     Icons.Outlined.SystemUpdate,
+                                                     contentDescription = null
+                                                 )
+                                             },
+                                             onClick = {
+                                                 expanded = !expanded
+                                                 viewModel.updateApp(context)
+                                             }
+                                         )
+                                         DropdownMenuItem(
+                                             text = { Text("Logout") },
+                                             leadingIcon = {
+                                                 Icon(
+                                                     Icons.Outlined.Logout,
+                                                     contentDescription = null
+                                                 )
+                                             },
+                                             onClick = {
+                                                 expanded = !expanded
+                                                 viewModel.updateUiState(
+                                                     uiState.copy(
+                                                         showLogoutDialog = true
+                                                     )
+                                                 )
+                                             }
+                                         )
+                                     }
+                                     }
+                                 }*/
+                            }
                     }, navigationIcon = {
                         if (!(currentRoute ?: "").contains(
                                 Destinations.Home.toString(),

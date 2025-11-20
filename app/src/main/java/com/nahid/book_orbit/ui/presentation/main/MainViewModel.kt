@@ -23,8 +23,7 @@ class MainViewModel(
     private val mutableUiState = MutableStateFlow(MainUiState())
 
     var uiState = mutableUiState.asStateFlow()
-   // val loginResponse = loginRepository.getLocalLoginResponse()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+   // val loginResponse = loginRepository.getLocalLoginResponse().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     init {
         viewModelScope.launch {

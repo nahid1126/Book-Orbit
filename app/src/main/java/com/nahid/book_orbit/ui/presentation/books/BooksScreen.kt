@@ -9,12 +9,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.nahid.book_orbit.core.utils.AppConstants
+import com.nahid.book_orbit.ui.presentation.main.MainViewModel
+import com.nahid.book_orbit.ui.theme.Black
 
 @Composable
-fun BooksScreen() {
+fun BooksScreen(sharedViewModel: MainViewModel) {
+    LaunchedEffect(Unit) {
+        sharedViewModel.updateUiState(sharedViewModel.uiState.value.copy(title = "Books"))
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -25,7 +31,7 @@ fun BooksScreen() {
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = (AppConstants.APP_MARGIN).dp)
         ) {
-            Text(text = "Books Screen")
+            Text(text = "Books Screen", color = Black)
         }
     }
 }

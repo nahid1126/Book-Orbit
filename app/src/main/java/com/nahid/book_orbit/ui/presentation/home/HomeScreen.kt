@@ -65,6 +65,7 @@ fun HomeScreen(
         viewModel.updateUiState(viewModel.uiState.copy(showExitDialog = true))
     }
     LaunchedEffect(Unit) {
+        sharedViewModel.updateTitle("Home")
         viewModel.getAllBooks()
     }
     /*LaunchedEffect(Unit) {

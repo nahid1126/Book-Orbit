@@ -24,4 +24,7 @@ sealed class Destinations {
 
     @Serializable
     data object BookDetails : Destinations()
+
+    @Serializable
+    data object BuyGems : Destinations()
 }

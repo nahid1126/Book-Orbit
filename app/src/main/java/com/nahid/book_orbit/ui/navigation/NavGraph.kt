@@ -1,10 +1,12 @@
 package com.nahid.book_orbit.ui.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.nahid.book_orbit.ui.presentation.books.BooksScreen
+import com.nahid.book_orbit.ui.presentation.gams.GemsScreen
 import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.presentation.profile.ProfileScreen
@@ -37,11 +39,27 @@ fun NavGraph(
 
         composable<Destinations.Books> {
             onBottomNavigationChange(1)
-            BooksScreen()
+            BackHandler {
+                navController.navigate(Destinations.Home) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
+            BooksScreen(sharedViewModel = mainViewModel)
         }
         composable<Destinations.Profile> {
             onBottomNavigationChange(2)
-            ProfileScreen()
+            BackHandler {
+                navController.navigate(Destinations.Home) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
+            ProfileScreen(sharedViewModel = mainViewModel)
+        }
+
+        composable<Destinations.BuyGems> {
+            GemsScreen(sharedViewModel = mainViewModel)
         }
 
         /*composable<Destinations.CropInputItemCategory> {
