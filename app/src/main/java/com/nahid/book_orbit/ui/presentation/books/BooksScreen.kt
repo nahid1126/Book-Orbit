@@ -18,9 +18,7 @@ import com.nahid.book_orbit.ui.theme.Black
 
 @Composable
 fun BooksScreen(sharedViewModel: MainViewModel) {
-    LaunchedEffect(Unit) {
-        sharedViewModel.updateUiState(sharedViewModel.uiState.value.copy(title = "Books"))
-    }
+    sharedViewModel.updateTitle("Books")
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -28,7 +26,6 @@ fun BooksScreen(sharedViewModel: MainViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(bottom = (AppConstants.APP_MARGIN).dp)
         ) {
             Text(text = "Books Screen", color = Black)

@@ -15,10 +15,15 @@ class BookRepositoryImpl(
 ):BookRepository {
     override suspend fun getAllBooks(): Results<List<Book>> {
         return try {
-            val books = db.collection("books")
+            val querySnapshot = db.collection("books")
                 .get()
                 .await()
-                .toObjects(Book::class.java)
+            val books = querySnapshot.documents.mapNotNull { document ->
+                val book = document.toObject(Book::class.java)
+                book?.apply {
+                    id = document.id
+                }
+            }
             Results.Success(books)
         } catch (e: Exception) {
             Results.Error(e)

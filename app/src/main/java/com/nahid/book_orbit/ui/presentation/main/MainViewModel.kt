@@ -23,7 +23,7 @@ class MainViewModel(
     private val mutableUiState = MutableStateFlow(MainUiState())
 
     var uiState = mutableUiState.asStateFlow()
-   // val loginResponse = loginRepository.getLocalLoginResponse().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    // val loginResponse = loginRepository.getLocalLoginResponse().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     init {
         viewModelScope.launch {
@@ -37,14 +37,19 @@ class MainViewModel(
                 mutableUiState.update { it.copy(userName = userName) }
             }
         }
-
-       /* viewModelScope.launch {
-            loginResponse.collectLatest { response ->
-                if (response != null) {
-                    mutableUiState.update { state -> state.copy(loginResponse = response) }
-                }
+        viewModelScope.launch {
+            appPreference.readUserGmail().collect { userName ->
+                mutableUiState.update { it.copy(gmail = userName) }
             }
-        }*/
+        }
+
+        /* viewModelScope.launch {
+             loginResponse.collectLatest { response ->
+                 if (response != null) {
+                     mutableUiState.update { state -> state.copy(loginResponse = response) }
+                 }
+             }
+         }*/
     }
 
     fun observeLoggedInStatus(isLoggedIn: (Boolean) -> Unit) {
@@ -125,7 +130,6 @@ class MainViewModel(
          }*/
     }
 
-
 }
 
 data class MainUiState(
@@ -134,7 +138,8 @@ data class MainUiState(
     val token: String? = null,
     val message: String? = null,
     val userName: String? = null,
-   // val loginResponse: LoginResponse? = null,
+    // val loginResponse: LoginResponse? = null,
     val showLogoutDialog: Boolean = false,
     val title: String = "Home",
+    val gmail: String = ""
 )

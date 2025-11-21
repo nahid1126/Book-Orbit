@@ -18,6 +18,7 @@ class AuthRepositoryImpl(
     override suspend fun signInWithGoogle(idToken: String): Results<FirebaseUser?> {
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
+            Log.d(TAG, "signInWithGoogle: $credential")
             val result = auth.signInWithCredential(credential).await()
             if (result.user != null) {
                 Log.d(TAG, "signInWithGoogle: ${result.user!!.uid}")

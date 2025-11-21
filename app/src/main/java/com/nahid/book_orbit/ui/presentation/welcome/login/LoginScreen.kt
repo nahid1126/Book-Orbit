@@ -2,6 +2,7 @@ package com.nahid.book_orbit.ui.presentation.welcome.login
 
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -38,6 +39,7 @@ import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.theme.Black
 import org.koin.compose.viewmodel.koinViewModel
 
+private const val TAG = "LoginScreen"
 @Composable
 fun LoginScreen(
     toHome: () -> Unit,
@@ -52,6 +54,7 @@ fun LoginScreen(
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
+            Log.d(TAG, "LoginScreen: $account")
             account?.idToken?.let { idToken ->
                 viewModel.googleLogin(idToken)
             }
@@ -64,6 +67,9 @@ fun LoginScreen(
         if (viewModel.uiState.isLoginSuccess) {
             toHome()
         }
+    }
+    BackHandler {
+        
     }
 
     Scaffold { innerPadding ->

@@ -1,8 +1,10 @@
 package com.nahid.book_orbit.ui.presentation.home
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +24,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Diamond
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,13 +57,12 @@ import com.nahid.book_orbit.ui.theme.Black
 import com.nahid.book_orbit.ui.theme.White
 import org.koin.compose.viewmodel.koinViewModel
 
+private const val TAG = "HomeScreen"
 @Composable
 fun HomeScreen(
     sharedViewModel: MainViewModel,
     viewModel: HomeScreenViewModel = koinViewModel(),
-    toHome: () -> Unit = {},
-    toBooksItem: () -> Unit = {},
-    toProfile: () -> Unit = {},
+    toBookDetails: (Book?) -> Unit,
     toExit: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -65,12 +72,10 @@ fun HomeScreen(
         viewModel.updateUiState(viewModel.uiState.copy(showExitDialog = true))
     }
     LaunchedEffect(Unit) {
-        sharedViewModel.updateTitle("Home")
+        sharedViewModel.updateUiState(sharedState.copy(title = "Home"))
         viewModel.getAllBooks()
     }
-    /*LaunchedEffect(Unit) {
-        sharedViewModel.updateUiState(sharedViewModel.uiState.value.copy(title = ""))
-    }*/
+
     /*LaunchedEffect(sharedState.loginResponse != null) {
         Logger.log("HomeScreen", "HomeScreen: Launch ${sharedViewModel.loginResponse.value}")
         viewModel.updateUiState(uiState = viewModel.uiState.value.copy(loginResponse = sharedViewModel.loginResponse.value))
@@ -89,35 +94,13 @@ fun HomeScreen(
                 .background(White)
         ) {
 
-            /*Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .clip(
-                        shape = RoundedCornerShape(
-                            topEnd = (AppConstants.APP_MARGIN * 4).dp,
-                            topStart = (AppConstants.APP_MARGIN * 4).dp
-                        )
-                    )
-                    .background(MaterialTheme.colorScheme.background),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-
-
-                }
-            }*/
             if (viewModel.uiState.books.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("No books available")
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -125,8 +108,7 @@ fun HomeScreen(
                 ) {
                     items(viewModel.uiState.books.size) { book ->
                         BookGridItem(book = viewModel.uiState.books[book]){
-                            // toBooksItem()
-                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                            toBookDetails(it)
                         }
                     }
                 }
@@ -165,11 +147,16 @@ fun HomeScreen(
 }
 
 @Composable
-fun BookGridItem(book: Book, onClick: (String) -> Unit) {
+fun BookGridItem(book: Book, onClick: (Book) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(book.id) }
+            .clip(RoundedCornerShape(12.dp))
+            .clickable {
+                Log.d(TAG, "BookGridItem: $book")
+                onClick(book)
+            }.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
             model = book.coverImage,
@@ -181,30 +168,49 @@ fun BookGridItem(book: Book, onClick: (String) -> Unit) {
             contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = book.title,
             fontSize = 14.sp,
-            maxLines = 1,
-            color = Black
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 4.dp)
         )
 
-        if (!book.isFree) {
-            Text(
-                text = "${book.price}৳",
-                fontSize = 12.sp,
-                color = Color.Red
-            )
-        } else {
-            Text(
-                text = "Free",
-                fontSize = 12.sp,
-                color = Color.Green
-            )
+        Spacer(modifier = Modifier.height(4.dp))
+        Card(
+            shape = RoundedCornerShape(50),
+            colors = CardDefaults.cardColors(
+                containerColor = if (book.isFree) Color(0xFFE0F2F1) else Color(0xFF4CAF50)
+            ),
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Diamond,
+                    contentDescription = "Price",
+                    modifier = Modifier.size(20.dp),
+                    tint = White
+                )
+
+                Text(
+                    text = if (book.isFree) "Free" else "${book.price}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = White
+                )
+            }
         }
     }
 }
+
 
 
 

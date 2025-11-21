@@ -15,13 +15,6 @@ class HomeScreenViewModel(private val bookRepository: BookRepository) : ViewMode
     var uiState: HomeScreenUiState by mutableStateOf(HomeScreenUiState())
         private set
 
-
-    init {
-        viewModelScope.launch {
-
-        }
-    }
-
     fun updateUiState(uiState: HomeScreenUiState) {
         this.uiState = uiState
     }

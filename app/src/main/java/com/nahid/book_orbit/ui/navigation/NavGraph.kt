@@ -1,15 +1,22 @@
 package com.nahid.book_orbit.ui.navigation
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
+import com.nahid.book_orbit.data.remote.dto.Book
+import com.nahid.book_orbit.ui.presentation.book_details.BookDetailsScreen
 import com.nahid.book_orbit.ui.presentation.books.BooksScreen
 import com.nahid.book_orbit.ui.presentation.gams.GemsScreen
 import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.presentation.profile.ProfileScreen
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 
 private const val TAG = "NavGraph"
 
@@ -26,12 +33,9 @@ fun NavGraph(
 
         composable<Destinations.Home> {
             onBottomNavigationChange(0)
-            HomeScreen(mainViewModel, toHome = {
-                navController.navigate(Destinations.Home)
-            }, toBooksItem = {
-                navController.navigate(Destinations.Books)
-            }, toProfile = {
-                navController.navigate(Destinations.Profile)
+            HomeScreen(mainViewModel, toBookDetails = { book ->
+                val finalBook = Json.encodeToJsonElement(book).toString()
+                navController.navigate(Destinations.BookDetails(finalBook))
             }, toExit = {
                 onExit()
             })
@@ -59,30 +63,24 @@ fun NavGraph(
         }
 
         composable<Destinations.BuyGems> {
+            BackHandler {
+                navController.navigate(Destinations.Home) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
             GemsScreen(sharedViewModel = mainViewModel)
         }
 
-        /*composable<Destinations.CropInputItemCategory> {
-            CropInputItemCategoryScreen(sharedViewModel = mainViewModel, toAreaWise = {
-                navController.navigate(Destinations.AreaCropInput)
-            }, toItemWise = {
-                navController.navigate(Destinations.AreaCropInputSummary)
-            })
+        composable<Destinations.BookDetails> {
+            val arguments = it.toRoute<Destinations.BookDetails>()
+            val finalBook = if (arguments.book == null) {
+                null
+            } else {
+                Json.decodeFromString<Book>(arguments.book)
+            }
+            BookDetailsScreen(finalBook, sharedViewModel = mainViewModel)
         }
-
-        composable<Destinations.AreaCropInputSummary> {
-            CropInputSummaryScreen(mainViewModel, toArea = { id, name, uom ->
-                navController.navigate(Destinations.AreaCropInputItem(id, name, uom))
-            })
-        }
-
-        composable<Destinations.Area> {
-            AreaScreen(mainViewModel, toZone = { id, name ->
-                navController.navigate(Destinations.Zone(id, name))
-            })
-        }*/
-
-
     }
 
 }

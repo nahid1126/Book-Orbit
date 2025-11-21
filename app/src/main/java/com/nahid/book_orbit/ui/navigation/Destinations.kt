@@ -1,5 +1,6 @@
 package com.nahid.book_orbit.ui.navigation
 
+import com.nahid.book_orbit.data.remote.dto.Book
 import kotlinx.serialization.Serializable
 
 sealed class Destinations {
@@ -23,7 +24,7 @@ sealed class Destinations {
     data object Profile : Destinations()
 
     @Serializable
-    data object BookDetails : Destinations()
+    data class BookDetails(val book: String?) : Destinations()
 
     @Serializable
     data object BuyGems : Destinations()
