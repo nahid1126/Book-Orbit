@@ -111,4 +111,11 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    // PDF viewer
+    implementation (libs.accompanist.webview)
+
+
+
+
+
 }

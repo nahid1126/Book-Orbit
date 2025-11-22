@@ -22,8 +22,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Diamond
+import androidx.compose.material.icons.filled.FileCopy
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -83,6 +86,7 @@ class MainActivity : ComponentActivity() {
                         finish()
                     }
                 }
+                viewModel.getGems()
                 if (state != null) {
                     App(viewModel, state!!)
                 }
@@ -191,56 +195,21 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            /* if ((currentRoute ?: "").contains(
-                                     Destinations.Home.toString(),
+                             if ((currentRoute ?: "").contains(
+                                     Destinations.BuyGems.toString(),
                                      ignoreCase = true
                                  )
                              ) {
                                  Box {
                                      IconButton(onClick = { expanded = !expanded }) {
                                          Icon(
-                                             Icons.Default.MoreVert,
+                                             Icons.Default.FileCopy,
                                              contentDescription = null,
                                              tint = White
                                          )
                                      }
-                                     DropdownMenu(
-                                         expanded = expanded,
-                                         onDismissRequest = { expanded = false }
-                                     ) {
-                                         DropdownMenuItem(
-                                             text = { Text("Update") },
-                                             leadingIcon = {
-                                                 Icon(
-                                                     Icons.Outlined.SystemUpdate,
-                                                     contentDescription = null
-                                                 )
-                                             },
-                                             onClick = {
-                                                 expanded = !expanded
-                                                 viewModel.updateApp(context)
-                                             }
-                                         )
-                                         DropdownMenuItem(
-                                             text = { Text("Logout") },
-                                             leadingIcon = {
-                                                 Icon(
-                                                     Icons.Outlined.Logout,
-                                                     contentDescription = null
-                                                 )
-                                             },
-                                             onClick = {
-                                                 expanded = !expanded
-                                                 viewModel.updateUiState(
-                                                     uiState.copy(
-                                                         showLogoutDialog = true
-                                                     )
-                                                 )
-                                             }
-                                         )
                                      }
-                                     }
-                                 }*/
+                                 }
                         }
                     }, navigationIcon = {
                         if (!(currentRoute ?: "").contains(

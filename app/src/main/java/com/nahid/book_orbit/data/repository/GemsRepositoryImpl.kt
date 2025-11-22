@@ -75,7 +75,7 @@ class GemsRepositoryImpl(
             val bookPrice = bookDoc.getLong("price") ?: 0L
 
             val walletRef = db.collection("wallet").document(uid)
-            val purchaseRef = db.collection("purchases").document(uid)
+            val purchaseRef = db.collection("purchase").document(uid)
 
             // Transaction to check wallet and buy book
             db.runTransaction { trx ->

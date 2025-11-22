@@ -16,8 +16,8 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.examples.android.model.** { <fields>; }
 
--keep class com.suffixit.smartadmin.data.remote.dto.** { <fields>; }
--keep class com.suffixit.smartadmin.data.local.entity.** { <fields>; }
+-keep class com.nahid.book_orbit.data.remote.dto.** { <fields>; }
+-keep class com.nahid.book_orbit.data.local.entity.** { <fields>; }
 
 
  # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).

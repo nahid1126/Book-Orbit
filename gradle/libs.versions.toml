@@ -1,4 +1,5 @@
 [versions]
+accompanistWebview = "0.30.1"
 agp = "8.9.3"
 coilCompose = "2.4.0"
 firebaseBom = "34.6.0"
@@ -31,6 +32,7 @@ credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
 
 [libraries]
+accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }

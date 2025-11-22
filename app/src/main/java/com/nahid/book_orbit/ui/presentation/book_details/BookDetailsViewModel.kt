@@ -14,6 +14,7 @@ import com.nahid.book_orbit.domain.repository.BookRepository
 import kotlinx.coroutines.launch
 
 private const val TAG = "BookDetailsViewModel"
+
 class BookDetailsViewModel(
     private val appPreference: AppPreference,
     private val bookRepository: BookRepository
@@ -26,6 +27,7 @@ class BookDetailsViewModel(
         this.uiState = uiState
     }
 
+
     fun purchasesBook() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
@@ -36,9 +38,68 @@ class BookDetailsViewModel(
                 val data = hashMapOf(
                     "userId" to uiState.uId,
                     "createdAt" to FieldValue.serverTimestamp(),
-                    "books.${uiState.book?.id}" to true     // <-- automatically add inside books map
+                    "books.${uiState.book?.id}" to hashMapOf(
+                        "purchased" to true,
+                        "price" to (uiState.book?.price?.toLong() ?: 0L)
+                    ),
                 )
+
                 val response = bookRepository.purchasedBook(uiState.uId, data)
+                uiState = when (response) {
+                    is Results.Error -> {
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(false, response.exception.message.toString())
+                        )
+                    }
+
+                    is Results.Success -> {
+                        reduceGems()
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(true, "Book Purchased Successfully")
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun reduceGems() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            if (uiState.uId.isNullOrEmpty()) {
+                uiState =
+                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+            } else if (uiState.book == null) {
+                uiState = uiState.copy(isLoading = false, message = Pair(false, "Book Not Found"))
+            } else {
+                val response = bookRepository.deductGems(uiState.uId ?: "", uiState.book!!.price)
+                uiState = when (response) {
+                    is Results.Error -> {
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(false, response.exception.message.toString())
+                        )
+                    }
+                    is Results.Success -> {
+                        uiState.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPurchaseBooks() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            if (uiState.uId.isNullOrEmpty()) {
+                uiState =
+                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+            } else {
+                val response = bookRepository.getPurchasedBooks(uiState.uId ?: "")
                 uiState = when (response) {
                     is Results.Error -> {
                         uiState.copy(
@@ -50,7 +111,7 @@ class BookDetailsViewModel(
                     is Results.Success -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(true, "Book Purchased Successfully")
+                            purchaseBooks = response.data
                         )
                     }
                 }
@@ -66,4 +127,5 @@ data class BookDetailsUi(
     val uId: String? = null,
     val book: Book? = null,
     val exception: Exception? = null,
+    val purchaseBooks: List<Book>? = emptyList()
 )

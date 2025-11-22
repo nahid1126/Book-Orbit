@@ -11,6 +11,7 @@ import androidx.navigation.toRoute
 import com.nahid.book_orbit.data.remote.dto.Book
 import com.nahid.book_orbit.ui.presentation.book_details.BookDetailsScreen
 import com.nahid.book_orbit.ui.presentation.books.BooksScreen
+import com.nahid.book_orbit.ui.presentation.books.PdfWebViewScreen
 import com.nahid.book_orbit.ui.presentation.gams.GemsScreen
 import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
@@ -49,8 +50,26 @@ fun NavGraph(
                     launchSingleTop = true
                 }
             }
-            BooksScreen(sharedViewModel = mainViewModel)
+            val arguments = it.toRoute<Destinations.PDFScreen>()
+            val finalBook = if (arguments.bookUrl == null) {
+                null
+            } else {
+                Json.decodeFromString<String>(arguments.bookUrl)
+            }
+            BooksScreen(sharedViewModel = mainViewModel, toPDFScreen = {
+                navController.navigate(Destinations.PDFScreen(finalBook))
+            })
         }
+        composable<Destinations.PDFScreen> {
+            val arguments = it.toRoute<Destinations.PDFScreen>()
+            val finalBook = if (arguments.bookUrl == null) {
+                null
+            } else {
+                Json.decodeFromString<String>(arguments.bookUrl)
+            }
+            PdfWebViewScreen(finalBook!!)
+        }
+
         composable<Destinations.Profile> {
             onBottomNavigationChange(2)
             BackHandler {

@@ -1,5 +1,6 @@
 package com.nahid.book_orbit.ui.navigation
 
+import androidx.navigation.NavBackStackEntry
 import com.nahid.book_orbit.data.remote.dto.Book
 import kotlinx.serialization.Serializable
 
@@ -25,6 +26,9 @@ sealed class Destinations {
 
     @Serializable
     data class BookDetails(val book: String?) : Destinations()
+
+    @Serializable
+    data class PDFScreen(val bookUrl: String?) : Destinations()
 
     @Serializable
     data object BuyGems : Destinations()
