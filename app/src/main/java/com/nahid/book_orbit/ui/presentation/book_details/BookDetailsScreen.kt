@@ -1,6 +1,8 @@
 package com.nahid.book_orbit.ui.presentation.book_details
 
-import android.R
+
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.data.remote.dto.Book
+import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
@@ -32,14 +36,18 @@ import com.nahid.book_orbit.ui.theme.Wheat
 import com.nahid.book_orbit.ui.theme.White
 import org.koin.compose.viewmodel.koinViewModel
 
+private const val TAG = "BookDetailsScreen"
 @Composable
 fun BookDetailsScreen(
     finalBook: Book?,
     sharedViewModel: MainViewModel,
     viewModel: BookDetailsViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        sharedViewModel.updateUiState(sharedViewModel.uiState.value.copy(title = "Book Details"))
+        sharedViewModel.updateTitle("Book Details")
+        viewModel.updateUiState(viewModel.uiState.copy(uId = sharedViewModel.uiState.value.userName))
+        Log.d(TAG, "BookDetailsScreen: ${sharedViewModel.uiState.value.userName}")
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -53,6 +61,7 @@ fun BookDetailsScreen(
                 .padding(bottom = (AppConstants.APP_MARGIN).dp)
         ) {
             finalBook?.let {
+                viewModel.updateUiState(viewModel.uiState.copy(book = it))
                 AsyncImage(
                     model = it.coverImage,
                     contentDescription = it.title,
@@ -97,9 +106,23 @@ fun BookDetailsScreen(
                         viewModel.updateUiState(viewModel.uiState.copy(isBuyClicked = false))
                     },
                     onConfirm = {
+                        viewModel.purchasesBook()
                         viewModel.updateUiState(viewModel.uiState.copy(isBuyClicked = false))
                     }
                 )
+            }
+            if (viewModel.uiState.isLoading) {
+                CircularProgressDialog()
+            }
+
+            if (viewModel.uiState.message != null) {
+                Toast.makeText(
+                    context,
+                    "${viewModel.uiState.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d(TAG, "BookDetailsScreen: ${viewModel.uiState.message}")
+                viewModel.updateUiState(viewModel.uiState.copy(message = null))
             }
         }
     }

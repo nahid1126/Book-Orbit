@@ -1,7 +1,11 @@
 package com.nahid.book_orbit.data.repository
 
+import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.firestore
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.remote.dto.Book
 import com.nahid.book_orbit.domain.repository.BookRepository
@@ -12,7 +16,7 @@ import kotlin.coroutines.suspendCoroutine
 class BookRepositoryImpl(
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth
-):BookRepository {
+) : BookRepository {
     override suspend fun getAllBooks(): Results<List<Book>> {
         return try {
             val querySnapshot = db.collection("books")
@@ -40,4 +44,19 @@ class BookRepositoryImpl(
                 .addOnSuccessListener { cont.resume(it.exists()) }
                 .addOnFailureListener { cont.resume(false) }
         }
+
+    override suspend fun purchasedBook(
+        uId: String?,
+        data: HashMap<String, Any?>
+    ): Results<Boolean> {
+        return try {
+            Firebase.firestore.collection("purchases")
+                .document(uId.toString())
+                .set(data, SetOptions.merge())
+                .await()
+            Results.Success(true)
+        } catch (e: Exception) {
+            Results.Error(e)
+        }
+    }
 }

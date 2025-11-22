@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.local.AppPreference
 import com.nahid.book_orbit.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,16 +34,16 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            appPreference.readUserName().collect { userName ->
+            appPreference.readToken().collect { userName ->
                 mutableUiState.update { it.copy(userName = userName) }
             }
         }
         viewModelScope.launch {
-            appPreference.readUserGmail().collect { userName ->
-                mutableUiState.update { it.copy(gmail = userName) }
+            appPreference.readUserGmail().collect { gmail ->
+                mutableUiState.update { it.copy(gmail = gmail) }
             }
         }
-
+        getGems()
         /* viewModelScope.launch {
              loginResponse.collectLatest { response ->
                  if (response != null) {
@@ -79,6 +80,30 @@ class MainViewModel(
     fun logout() {
         viewModelScope.launch {
             appPreference.saveToken("")
+        }
+    }
+
+    fun getGems() {
+        viewModelScope.launch {
+            if (uiState.value.userName.isNullOrEmpty()) {
+                uiState.value.copy(message = "User Name is Empty")
+            }
+            val response = loginRepository.getTotalGems(uiState.value.userName ?: "")
+            when (response) {
+                is Results.Error -> {
+                  mutableUiState.value =  uiState.value.copy(
+                        isLoading = false,
+                        message = Pair(false, response.exception.message).toString()
+                    )
+                }
+
+                is Results.Success -> {
+                   mutableUiState.value = uiState.value.copy(
+                        isLoading = false,
+                        gems = response.data.toString()
+                    )
+                }
+            }
         }
     }
 
@@ -141,5 +166,6 @@ data class MainUiState(
     // val loginResponse: LoginResponse? = null,
     val showLogoutDialog: Boolean = false,
     val title: String = "Home",
-    val gmail: String = ""
+    val gmail: String = "",
+    val gems: String? = ""
 )

@@ -18,6 +18,6 @@ val viewModelModule = module {
     viewModel {
         MainViewModel(get(), get())
     }
-    viewModel { BookDetailsViewModel() }
+    viewModel { BookDetailsViewModel(get(),get()) }
     viewModel { GemsViewModel(get()) }
 }

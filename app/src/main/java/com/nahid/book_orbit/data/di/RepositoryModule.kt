@@ -9,7 +9,7 @@ import com.nahid.book_orbit.domain.repository.GemsRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    factory<AuthRepository> { AuthRepositoryImpl(get()) }
+    factory<AuthRepository> { AuthRepositoryImpl(get(),get()) }
     factory<BookRepository> { BookRepositoryImpl(get(), get()) }
     factory<GemsRepository> { GemsRepositoryImpl(get()) }
 }

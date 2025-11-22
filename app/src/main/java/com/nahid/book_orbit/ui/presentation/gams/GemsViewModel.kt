@@ -21,14 +21,18 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
     init {
         getAllGems()
     }
-   private fun getAllGems() {
+
+    private fun getAllGems() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
             try {
                 val gems = gemsRepository.getAllGems()
                 uiState = when (gems) {
                     is Results.Error -> {
-                        uiState.copy(isLoading = false, exception = gems.exception)
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(false, gems.exception.message.toString())
+                        )
                     }
 
                     is Results.Success -> {
@@ -36,7 +40,38 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                uiState = uiState.copy(isLoading = false, exception = e)
+                uiState =
+                    uiState.copy(isLoading = false, message = Pair(false, e.message.toString()))
+            }
+        }
+    }
+
+    fun buyGems() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            if (uiState.uId.isNullOrEmpty()) {
+                uiState =
+                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+            } else if (uiState.gemsId.isNullOrEmpty()) {
+                uiState =
+                    uiState.copy(isLoading = false, message = Pair(false, "Gems Id Not Found"))
+            } else {
+                val response = gemsRepository.purchaseGems(uiState.uId ?: "", uiState.gemsId ?: "")
+                uiState = when (response) {
+                    is Results.Error -> {
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(false, response.exception.message.toString())
+                        )
+                    }
+
+                    is Results.Success -> {
+                        uiState.copy(
+                            isLoading = false,
+                            message = Pair(true, "Gems Purchased Successfully")
+                        )
+                    }
+                }
             }
         }
     }
@@ -47,5 +82,8 @@ data class GemsUiState(
     val message: Pair<Boolean, String>? = null,
     val exception: Exception? = null,
     val showExitDialog: Boolean = false,
-    val gemsList: List<Gems>? = emptyList()
+    val gemsList: List<Gems>? = emptyList(),
+    val uId: String? = null,
+    val gemsId: String? = null,
+    val showConfirmationDialog: Boolean=false
 )

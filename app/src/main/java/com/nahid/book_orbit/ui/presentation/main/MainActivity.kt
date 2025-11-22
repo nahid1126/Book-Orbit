@@ -184,7 +184,7 @@ class MainActivity : ComponentActivity() {
                                 )
                                 Spacer(modifier = Modifier.width(2.dp))
                                 Text(
-                                    text = "200",
+                                    text = viewModel.uiState.value.gems ?: 0.toString(),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
@@ -241,7 +241,7 @@ class MainActivity : ComponentActivity() {
                                      }
                                      }
                                  }*/
-                            }
+                        }
                     }, navigationIcon = {
                         if (!(currentRoute ?: "").contains(
                                 Destinations.Home.toString(),

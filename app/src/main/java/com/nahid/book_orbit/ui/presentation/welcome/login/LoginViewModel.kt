@@ -57,7 +57,7 @@ class LoginViewModel(
                         isLoading = false,
                         isLoginSuccess = true,
                         userInfo = result.data,
-                        message = Pair(true, "Login Success")
+                        message = Pair(true, "Welcome")
                     )
                 }
             }
