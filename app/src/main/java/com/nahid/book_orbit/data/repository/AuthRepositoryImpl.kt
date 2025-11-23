@@ -34,20 +34,5 @@ class AuthRepositoryImpl(
             Results.Error(e.getSpecificException())
         }
     }
-    override suspend fun getTotalGems(uid: String): Results<Long> {
-        return try {
-            Log.d(TAG, "getTotalGems: $uid")
-            val snap = db.collection("wallet")
-                .document(auth.currentUser?.uid.toString())
-                .get()
-                .await()
-
-            Log.d(TAG, "getTotalGems: $uid ${snap.getLong("gems") ?: 0L}")
-            Results.Success(snap.getLong("gems") ?: 0L)
-        } catch (e: Exception) {
-            Log.d(TAG, "getTotalGems: ${e.message}")
-            Results.Error(e.getSpecificException())
-        }
-    }
 
 }

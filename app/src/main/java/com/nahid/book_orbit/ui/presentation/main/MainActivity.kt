@@ -3,6 +3,7 @@ package com.nahid.book_orbit.ui.presentation.main
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Diamond
 import androidx.compose.material.icons.filled.FileCopy
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,7 +87,6 @@ class MainActivity : ComponentActivity() {
                         finish()
                     }
                 }
-                viewModel.getGems()
                 if (state != null) {
                     App(viewModel, state!!)
                 }
@@ -117,7 +117,9 @@ class MainActivity : ComponentActivity() {
             AnimatedProgressDialog()
         }
         var selectedNavigationDestination by remember { mutableIntStateOf(0) }
-
+        LaunchedEffect(Unit) {
+            viewModel.readGems()
+        }
         if (uiState.showLogoutDialog) {
             ConfirmationDialog(
                 title = "Logout",
@@ -187,8 +189,9 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(2.dp))
+                                Log.d(TAG, "App: ${uiState.gems}")
                                 Text(
-                                    text = viewModel.uiState.value.gems ?: 0.toString(),
+                                    text = uiState.gems.toString(),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black

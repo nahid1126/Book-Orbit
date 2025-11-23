@@ -32,7 +32,6 @@ import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
-import com.nahid.book_orbit.ui.theme.Wheat
 import com.nahid.book_orbit.ui.theme.White
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -46,7 +45,12 @@ fun BookDetailsScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         sharedViewModel.updateTitle("Book Details")
-        viewModel.updateUiState(viewModel.uiState.copy(uId = sharedViewModel.uiState.value.userName))
+        viewModel.updateUiState(
+            viewModel.uiState.copy(
+                uId = sharedViewModel.uiState.value.userName,
+                currentGems = sharedViewModel.uiState.value.gems ?: 0
+            )
+        )
         Log.d(TAG, "BookDetailsScreen: ${sharedViewModel.uiState.value.userName}")
     }
     Surface(
@@ -113,6 +117,9 @@ fun BookDetailsScreen(
             }
             if (viewModel.uiState.isLoading) {
                 CircularProgressDialog()
+            }
+            if (viewModel.uiState.isBookPurchased){
+                viewModel.putGems()
             }
 
             if (viewModel.uiState.message != null) {

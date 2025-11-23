@@ -1,14 +1,17 @@
 package com.nahid.book_orbit.data.local
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+private const val TAG = "AppPreference"
 class AppPreference(private val dataStore: DataStore<Preferences>) {
     companion object {
         val TOKEN = stringPreferencesKey("token")
@@ -17,6 +20,7 @@ class AppPreference(private val dataStore: DataStore<Preferences>) {
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         val MODE = booleanPreferencesKey("mode")
         val USER_GMAIL = stringPreferencesKey("user_gmail")
+        val TOTAL_GEMS = longPreferencesKey("total_gems")
 
     }
 
@@ -117,4 +121,20 @@ class AppPreference(private val dataStore: DataStore<Preferences>) {
     }
 
     fun readUserGmail(): Flow<String> = dataStore.data.map { it[USER_GMAIL] ?: "" }
+
+    suspend fun storeTotalGems(totalGems: Long?): Boolean {
+        return try {
+            Log.d(TAG, "storeTotalGems: $totalGems")
+            dataStore.edit {
+                it[TOTAL_GEMS] = totalGems ?: 0
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun readTotalGems(): Flow<Long> = dataStore.data.map {
+        it[TOTAL_GEMS] ?: 0
+    }
 }

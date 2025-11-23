@@ -63,49 +63,25 @@ class GemsRepositoryImpl(
         }
     }
 
-    // --------------------
-    // Purchase Book (deduct gems)
-    // --------------------
-    override suspend fun purchaseBook(uid: String, bookId: String): Results<Boolean> {
-        return try {
-            val bookRef = db.collection("books").document(bookId)
-            val bookDoc = bookRef.get().await()
-            if (!bookDoc.exists()) return Results.Error(Exception("Book not found"))
-
-            val bookPrice = bookDoc.getLong("price") ?: 0L
-
-            val walletRef = db.collection("wallet").document(uid)
-            val purchaseRef = db.collection("purchase").document(uid)
-
-            // Transaction to check wallet and buy book
-            db.runTransaction { trx ->
-                val walletSnap = trx.get(walletRef)
-                val currentGems = walletSnap.getLong("gems") ?: 0L
-
-                if (currentGems < bookPrice) throw Exception("Insufficient gems")
-
-                // Deduct gems
-                trx.update(walletRef, "gems", currentGems - bookPrice)
-
-                // Add book purchase
-                trx.set(
-                    purchaseRef,
-                    mapOf("userId" to uid, "books.$bookId" to true),
-                    SetOptions.merge()
-                )
-            }.await()
-
-            Results.Success(true)
-
-        } catch (e: Exception) {
-            Results.Error(e.getSpecificException())
-        }
-    }
 
     // --------------------
     // Get total gems
     // --------------------
+    override suspend fun getTotalGems(uid: String): Results<Long> {
+        return try {
+            Log.d(TAG, "getTotalGems: $uid")
+            val snap = db.collection("wallet")
+                .document(uid)
+                .get()
+                .await()
 
+            Log.d(TAG, "getTotalGems: $uid ${snap.getLong("gems") ?: 0L}")
+            Results.Success(snap.getLong("gems") ?: 0L)
+        } catch (e: Exception) {
+            Log.d(TAG, "getTotalGems: ${e.message}")
+            Results.Error(e.getSpecificException())
+        }
+    }
 
     // --------------------
     // Get transaction history

@@ -101,6 +101,9 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
                     }
                 )
             }
+            if (viewModel.uiState.isGemsPurchase){
+                viewModel.putGems()
+            }
         }
     }
 }

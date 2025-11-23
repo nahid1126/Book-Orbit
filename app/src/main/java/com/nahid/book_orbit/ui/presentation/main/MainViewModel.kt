@@ -8,9 +8,7 @@ import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.local.AppPreference
 import com.nahid.book_orbit.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -43,7 +41,6 @@ class MainViewModel(
                 mutableUiState.update { it.copy(gmail = gmail) }
             }
         }
-        getGems()
         /* viewModelScope.launch {
              loginResponse.collectLatest { response ->
                  if (response != null) {
@@ -51,6 +48,22 @@ class MainViewModel(
                  }
              }
          }*/
+    }
+
+    fun putGems(gems: Long) {
+        viewModelScope.launch {
+            appPreference.storeTotalGems(gems)
+            readGems()
+        }
+    }
+
+    fun readGems() {
+        viewModelScope.launch {
+            appPreference.readTotalGems().collect {
+                Log.d(TAG, "readGems: $it")
+                mutableUiState.update { state -> state.copy(gems = it) }
+            }
+        }
     }
 
     fun observeLoggedInStatus(isLoggedIn: (Boolean) -> Unit) {
@@ -83,29 +96,6 @@ class MainViewModel(
         }
     }
 
-    fun getGems() {
-        viewModelScope.launch {
-            if (uiState.value.userName.isNullOrEmpty()) {
-                uiState.value.copy(message = "User Name is Empty")
-            }
-            val response = loginRepository.getTotalGems(uiState.value.userName ?: "")
-            when (response) {
-                is Results.Error -> {
-                  mutableUiState.value =  uiState.value.copy(
-                        isLoading = false,
-                        message = Pair(false, response.exception.message).toString()
-                    )
-                }
-
-                is Results.Success -> {
-                   mutableUiState.value = uiState.value.copy(
-                        isLoading = false,
-                        gems = response.data.toString()
-                    )
-                }
-            }
-        }
-    }
 
     fun updateApp(context: Context) {
         /*viewModelScope.launch {
@@ -167,5 +157,5 @@ data class MainUiState(
     val showLogoutDialog: Boolean = false,
     val title: String = "Home",
     val gmail: String = "",
-    val gems: String? = ""
+    val gems: Long? = 0L
 )

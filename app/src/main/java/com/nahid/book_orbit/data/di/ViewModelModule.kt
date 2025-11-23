@@ -19,5 +19,5 @@ val viewModelModule = module {
         MainViewModel(get(), get())
     }
     viewModel { BookDetailsViewModel(get(),get()) }
-    viewModel { GemsViewModel(get()) }
+    viewModel { GemsViewModel(get(),get()) }
 }
