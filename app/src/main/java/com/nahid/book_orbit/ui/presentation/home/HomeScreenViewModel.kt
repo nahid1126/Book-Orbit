@@ -39,7 +39,7 @@ class HomeScreenViewModel(private val bookRepository: BookRepository) : ViewMode
                 val books = bookRepository.getAllBooks()
                 uiState = when (books) {
                     is Results.Error -> {
-                        uiState.copy(isLoading = false, exception = books.exception)
+                        uiState.copy(isLoading = false, message = books.exception.message.toString())
                     }
 
                     is Results.Success -> {
@@ -47,7 +47,7 @@ class HomeScreenViewModel(private val bookRepository: BookRepository) : ViewMode
                     }
                 }
             } catch (e: Exception) {
-                uiState = uiState.copy(isLoading = false, exception = e)
+                uiState = uiState.copy(isLoading = false, message = e.message.toString())
             }
         }
     }
@@ -59,7 +59,7 @@ class HomeScreenViewModel(private val bookRepository: BookRepository) : ViewMode
 data class HomeScreenUiState(
     val isLoading: Boolean = false,
     val token: String? = null,
-    val exception: Exception? = null,
+    val message: String? = null,
     val showExitDialog: Boolean = false,
     val books: List<Book> = emptyList(),
 )

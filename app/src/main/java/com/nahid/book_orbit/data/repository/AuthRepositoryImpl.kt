@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nahid.book_orbit.core.utils.Results
+import com.nahid.book_orbit.core.utils.exception.CustomException
 import com.nahid.book_orbit.core.utils.extension.getSpecificException
 import com.nahid.book_orbit.domain.repository.AuthRepository
 import kotlinx.coroutines.tasks.await
@@ -45,7 +46,7 @@ class AuthRepositoryImpl(
             Results.Success(snap.getLong("gems") ?: 0L)
         } catch (e: Exception) {
             Log.d(TAG, "getTotalGems: ${e.message}")
-            Results.Error(Exception(e.message ?: "Failed to get total gems"))
+            Results.Error(e.getSpecificException())
         }
     }
 

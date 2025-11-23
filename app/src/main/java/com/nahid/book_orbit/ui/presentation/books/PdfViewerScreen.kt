@@ -3,6 +3,7 @@ package com.nahid.book_orbit.ui.presentation.books
 import android.annotation.SuppressLint
 import android.content.Context
 import android.gesture.GestureLibraries.fromFile
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
@@ -24,11 +25,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import kotlin.io.outputStream
 
+private const val TAG = "PdfViewerScreen"
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun PdfWebViewScreen(pdfUrl: String) {
     AndroidView(factory = { ctx ->
         WebView(ctx).apply {
+            val fileId = pdfUrl.substringAfter("d/").substringBefore("/view")
             webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
@@ -36,7 +39,7 @@ fun PdfWebViewScreen(pdfUrl: String) {
             settings.useWideViewPort = true
             settings.builtInZoomControls = true
 
-            loadUrl("https://docs.google.com/gview?embedded=true&url=$pdfUrl")
+            loadUrl("https://drive.google.com/file/d/$fileId/preview")
         }
     }, modifier = Modifier.fillMaxSize())
 }

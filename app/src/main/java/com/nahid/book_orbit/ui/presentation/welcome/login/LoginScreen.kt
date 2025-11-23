@@ -131,15 +131,9 @@ fun LoginScreen(
                 }
             }
 
-            if (state.message != null) {
-                val message = state.message.second
-
-                if (state.message.first) {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                }
-                viewModel.updateUiState(state.copy(message = null))
+            if (!viewModel.uiState.message.isNullOrEmpty()) {
+                Toast.makeText(context, viewModel.uiState.message, Toast.LENGTH_SHORT).show()
+                viewModel.updateUiState( viewModel.uiState.copy(message = null))
             }
 
             if (state.isLoading) {

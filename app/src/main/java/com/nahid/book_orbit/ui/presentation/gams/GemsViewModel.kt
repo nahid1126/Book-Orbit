@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.remote.dto.Gems
+import com.nahid.book_orbit.data.remote.dto.GemsTransaction
 import com.nahid.book_orbit.domain.repository.GemsRepository
 import kotlinx.coroutines.launch
 
@@ -31,7 +32,7 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
                     is Results.Error -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(false, gems.exception.message.toString())
+                            message =  gems.exception.message.toString()
                         )
                     }
 
@@ -41,7 +42,7 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, e.message.toString()))
+                    uiState.copy(isLoading = false, message =  e.message.toString())
             }
         }
     }
@@ -51,24 +52,50 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
             uiState = uiState.copy(isLoading = true)
             if (uiState.uId.isNullOrEmpty()) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+                    uiState.copy(isLoading = false, message =  "User Id Not Found")
             } else if (uiState.gemsId.isNullOrEmpty()) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, "Gems Id Not Found"))
+                    uiState.copy(isLoading = false, message =  "Gems Id Not Found")
             } else {
                 val response = gemsRepository.purchaseGems(uiState.uId ?: "", uiState.gemsId ?: "")
                 uiState = when (response) {
                     is Results.Error -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(false, response.exception.message.toString())
+                            message =  response.exception.message.toString()
                         )
                     }
 
                     is Results.Success -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(true, "Gems Purchased Successfully")
+                            message = "Gems Purchased Successfully"
+                        )
+                    }
+                }
+            }
+        }
+    }
+    fun getHistory() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            if (uiState.uId.isNullOrEmpty()) {
+                uiState =
+                    uiState.copy(isLoading = false, message =  "User Id Not Found")
+            } else {
+                val response = gemsRepository.getTransactionHistory(uiState.uId ?: "")
+                uiState = when (response) {
+                    is Results.Error -> {
+                        uiState.copy(
+                            isLoading = false,
+                            message =  response.exception.message.toString()
+                        )
+                    }
+
+                    is Results.Success -> {
+                        uiState.copy(
+                            isLoading = false,
+                            transactionHistory = response.data
                         )
                     }
                 }
@@ -79,11 +106,11 @@ class GemsViewModel(private val gemsRepository: GemsRepository) : ViewModel() {
 
 data class GemsUiState(
     val isLoading: Boolean = false,
-    val message: Pair<Boolean, String>? = null,
-    val exception: Exception? = null,
+    val message: String? = null,
     val showExitDialog: Boolean = false,
     val gemsList: List<Gems>? = emptyList(),
     val uId: String? = null,
     val gemsId: String? = null,
-    val showConfirmationDialog: Boolean=false
+    val showConfirmationDialog: Boolean = false,
+    val transactionHistory: List<GemsTransaction>? = emptyList()
 )

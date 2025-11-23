@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -72,9 +73,8 @@ fun BooksScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(viewModel.uiState.purchaseBooks!!.size) { book ->
-                        BooksGridItem(book = viewModel.uiState.purchaseBooks!![book]) {
-                            //toBookDetails(it)
+                    items(viewModel.uiState.purchaseBooks!!) { book ->
+                        BooksGridItem(book = book) {
                             toPDFScreen(it)
                         }
                     }
@@ -85,13 +85,9 @@ fun BooksScreen(
                 CircularProgressDialog()
             }
 
-            if (viewModel.uiState.message != null) {
-                Toast.makeText(
-                    context,
-                    "${viewModel.uiState.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                viewModel.updateUiState(viewModel.uiState.copy(message = null))
+            if (!viewModel.uiState.message.isNullOrEmpty()) {
+                Toast.makeText(context, viewModel.uiState.message, Toast.LENGTH_SHORT).show()
+                viewModel.updateUiState( viewModel.uiState.copy(message = null))
             }
         }
     }

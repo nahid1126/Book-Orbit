@@ -201,7 +201,7 @@ class MainActivity : ComponentActivity() {
                                  )
                              ) {
                                  Box {
-                                     IconButton(onClick = { expanded = !expanded }) {
+                                     IconButton(onClick = { navController.navigate(Destinations.History) }) {
                                          Icon(
                                              Icons.Default.FileCopy,
                                              contentDescription = null,

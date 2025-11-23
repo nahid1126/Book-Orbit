@@ -32,4 +32,7 @@ sealed class Destinations {
 
     @Serializable
     data object BuyGems : Destinations()
+
+    @Serializable
+    data object History: Destinations()
 }

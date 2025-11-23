@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Diamond
@@ -69,8 +70,8 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(viewModel.uiState.gemsList!!.size) { book ->
-                        GemsPurchaseItem(viewModel.uiState.gemsList!![book]){
+                    items(viewModel.uiState.gemsList!!) { book ->
+                        GemsPurchaseItem(book){
                             viewModel.updateUiState(viewModel.uiState.copy(gemsId = it, showExitDialog = true))
                         }
                     }
@@ -81,13 +82,9 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
                 CircularProgressDialog()
             }
 
-            if (viewModel.uiState.message != null) {
-                Toast.makeText(
-                    context,
-                    "${viewModel.uiState.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                viewModel.updateUiState(viewModel.uiState.copy(message = null))
+            if (!viewModel.uiState.message.isNullOrEmpty()) {
+                Toast.makeText(context, viewModel.uiState.message, Toast.LENGTH_SHORT).show()
+                viewModel.updateUiState( viewModel.uiState.copy(message = null))
             }
             if (viewModel.uiState.showExitDialog){
                 ConfirmationDialog(

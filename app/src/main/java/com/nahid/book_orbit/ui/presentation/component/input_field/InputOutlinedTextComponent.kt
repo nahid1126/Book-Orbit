@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nahid.book_orbit.core.utils.AppConstants
-import com.suffixit.smartadmin.core.utils.extension.checkInputType
-import com.suffixit.smartadmin.core.utils.extension.equalIgnoreCase
+import com.nahid.book_orbit.core.utils.extension.checkInputType
+import com.nahid.book_orbit.core.utils.extension.equalIgnoreCase
 
 @Composable
 fun InputOutlinedTextComponent(question: InputQuestion, onAnswerChange: (String) -> Unit) {

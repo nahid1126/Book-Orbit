@@ -1,4 +1,4 @@
-package com.suffixit.smartadmin.core.utils.exception
+package com.nahid.book_orbit.core.utils.exception
 
 class ServerException(override val message:String):Exception(message)
 class InvalidUserException(override val message:String = "User Id Or Password Incorrect"):Exception(message)

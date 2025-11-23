@@ -1,13 +1,14 @@
 package com.nahid.book_orbit.data.repository
 
 import android.util.Log
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.firestore
 import com.nahid.book_orbit.core.utils.Results
+import com.nahid.book_orbit.core.utils.exception.CustomException
+import com.nahid.book_orbit.core.utils.extension.getSpecificException
 import com.nahid.book_orbit.data.remote.dto.Book
 import com.nahid.book_orbit.domain.repository.BookRepository
 import kotlinx.coroutines.tasks.await
@@ -32,7 +33,7 @@ class BookRepositoryImpl(
             }
             Results.Success(books)
         } catch (e: Exception) {
-            Results.Error(e)
+            Results.Error(e.getSpecificException())
         }
     }
 
@@ -51,6 +52,7 @@ class BookRepositoryImpl(
         uId: String?,
         data: HashMap<String, Any?>
     ): Results<Boolean> {
+
         val walletRef = db.collection("wallet").document(uId.toString())
         val purchaseRef = db.collection("purchase").document(uId.toString())
 
@@ -58,26 +60,28 @@ class BookRepositoryImpl(
             db.runTransaction { trx ->
                 val walletSnap = trx.get(walletRef)
                 val currentGems = walletSnap.getLong("gems") ?: 0L
-
                 val bookPrice = (data["price"] as? Long) ?: 0L
+
                 Log.d(TAG, "purchasedBook: $currentGems, $bookPrice")
-                if (currentGems < bookPrice) {
-                    throw Exception("Not enough gems")
+                if (currentGems <= 0 || currentGems < bookPrice) {
+                    throw FirebaseFirestoreException(
+                        "Not enough gems",
+                        FirebaseFirestoreException.Code.ABORTED
+                    )
                 }
-                val newGems = currentGems - bookPrice
-                trx.set(walletRef, mapOf("gems" to newGems), SetOptions.merge())
-
+                trx.update(walletRef, "gems", currentGems - bookPrice)
                 trx.set(purchaseRef, data, SetOptions.merge())
-
-                null
+                true
             }.await()
 
             Results.Success(true)
 
         } catch (e: Exception) {
-            Results.Error(e)
+            Log.e(TAG, "purchase error: ${e.message}")
+            Results.Error(e.getSpecificException())
         }
     }
+
 
     override suspend fun getPurchasedBooks(uid: String): Results<List<Book>> {
         return try {
@@ -130,7 +134,7 @@ class BookRepositoryImpl(
 
         } catch (e: Exception) {
             Log.e(TAG, "getPurchasedBooks failed", e)
-            Results.Error(Exception(e.message ?: "Failed to load purchased books"))
+            Results.Error(e.getSpecificException())
         }
     }
 
@@ -148,7 +152,7 @@ class BookRepositoryImpl(
 
             Results.Success(true)
         } catch (e: Exception) {
-            Results.Error(Exception(e.message ?: "Failed to deduct gems"))
+            Results.Error(e.getSpecificException())
         }
     }
 

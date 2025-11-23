@@ -33,7 +33,7 @@ class BookDetailsViewModel(
             uiState = uiState.copy(isLoading = true)
             if (uiState.uId.isNullOrEmpty()) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+                    uiState.copy(isLoading = false, message = "User Id Not Found")
             } else {
                 val data = hashMapOf(
                     "userId" to uiState.uId,
@@ -49,7 +49,7 @@ class BookDetailsViewModel(
                     is Results.Error -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(false, response.exception.message.toString())
+                            message = response.exception.message.toString()
                         )
                     }
 
@@ -57,7 +57,7 @@ class BookDetailsViewModel(
                         reduceGems()
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(true, "Book Purchased Successfully")
+                            message = "Book Purchased Successfully"
                         )
                     }
                 }
@@ -70,16 +70,16 @@ class BookDetailsViewModel(
             uiState = uiState.copy(isLoading = true)
             if (uiState.uId.isNullOrEmpty()) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+                    uiState.copy(isLoading = false, message = "User Id Not Found")
             } else if (uiState.book == null) {
-                uiState = uiState.copy(isLoading = false, message = Pair(false, "Book Not Found"))
+                uiState = uiState.copy(isLoading = false, message = "Book Not Found")
             } else {
                 val response = bookRepository.deductGems(uiState.uId ?: "", uiState.book!!.price)
                 uiState = when (response) {
                     is Results.Error -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(false, response.exception.message.toString())
+                            message = response.exception.message.toString()
                         )
                     }
                     is Results.Success -> {
@@ -97,14 +97,14 @@ class BookDetailsViewModel(
             uiState = uiState.copy(isLoading = true)
             if (uiState.uId.isNullOrEmpty()) {
                 uiState =
-                    uiState.copy(isLoading = false, message = Pair(false, "User Id Not Found"))
+                    uiState.copy(isLoading = false, message = "User Id Not Found")
             } else {
                 val response = bookRepository.getPurchasedBooks(uiState.uId ?: "")
                 uiState = when (response) {
                     is Results.Error -> {
                         uiState.copy(
                             isLoading = false,
-                            message = Pair(false, response.exception.message.toString())
+                            message = response.exception.message.toString()
                         )
                     }
 
@@ -122,10 +122,9 @@ class BookDetailsViewModel(
 
 data class BookDetailsUi(
     val isLoading: Boolean = false,
-    val message: Pair<Boolean, String>? = null,
+    val message: String? = null,
     val isBuyClicked: Boolean = false,
     val uId: String? = null,
     val book: Book? = null,
-    val exception: Exception? = null,
     val purchaseBooks: List<Book>? = emptyList()
 )

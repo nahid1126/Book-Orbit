@@ -13,6 +13,7 @@ import com.nahid.book_orbit.ui.presentation.book_details.BookDetailsScreen
 import com.nahid.book_orbit.ui.presentation.books.BooksScreen
 import com.nahid.book_orbit.ui.presentation.books.PdfWebViewScreen
 import com.nahid.book_orbit.ui.presentation.gams.GemsScreen
+import com.nahid.book_orbit.ui.presentation.gams.HistoryScreen
 import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.presentation.profile.ProfileScreen
@@ -50,13 +51,8 @@ fun NavGraph(
                     launchSingleTop = true
                 }
             }
-            val arguments = it.toRoute<Destinations.PDFScreen>()
-            val finalBook = if (arguments.bookUrl == null) {
-                null
-            } else {
-                Json.decodeFromString<String>(arguments.bookUrl)
-            }
             BooksScreen(sharedViewModel = mainViewModel, toPDFScreen = {
+                val finalBook = Json.encodeToJsonElement(it).toString()
                 navController.navigate(Destinations.PDFScreen(finalBook))
             })
         }
@@ -99,6 +95,16 @@ fun NavGraph(
                 Json.decodeFromString<Book>(arguments.book)
             }
             BookDetailsScreen(finalBook, sharedViewModel = mainViewModel)
+        }
+
+        composable<Destinations.History> {
+            BackHandler {
+                navController.navigate(Destinations.Home) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
+            HistoryScreen(sharedViewModel = mainViewModel)
         }
     }
 

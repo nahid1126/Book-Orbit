@@ -1,8 +1,8 @@
 package com.nahid.book_orbit.core.utils.extension
 
 import android.util.Log
-import com.suffixit.smartadmin.core.utils.exception.CustomException
-import com.suffixit.smartadmin.core.utils.exception.NetworkException
+import com.nahid.book_orbit.core.utils.exception.CustomException
+import com.nahid.book_orbit.core.utils.exception.NetworkException
 
 import io.ktor.util.network.UnresolvedAddressException
 import java.net.ConnectException

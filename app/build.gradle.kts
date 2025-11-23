@@ -26,9 +26,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("keystore.jks")
-            storePassword = "Sil@321!"
-            keyAlias = "keyAdmin"
-            keyPassword = "Sil@321!"
+            storePassword = "n@hid26"
+            keyAlias = "keyBookOrbit"
+            keyPassword = "n@hid26"
         }
     }
 

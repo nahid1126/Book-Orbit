@@ -1,18 +1,18 @@
 package com.nahid.book_orbit.data.repository
 
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.firestore
 import com.nahid.book_orbit.core.utils.Results
-import com.nahid.book_orbit.data.remote.dto.Book
+import com.nahid.book_orbit.core.utils.extension.getSpecificException
 import com.nahid.book_orbit.data.remote.dto.Gems
+import com.nahid.book_orbit.data.remote.dto.GemsTransaction
 import com.nahid.book_orbit.domain.repository.GemsRepository
 import kotlinx.coroutines.tasks.await
 
+private const val TAG = "GemsRepositoryImpl"
 class GemsRepositoryImpl(
     private val db: FirebaseFirestore
 ) : GemsRepository {
@@ -29,7 +29,7 @@ class GemsRepositoryImpl(
             }
             Results.Success(gems)
         } catch (e: Exception) {
-            Results.Error(e)
+            Results.Error(e.getSpecificException())
         }
     }
 
@@ -59,7 +59,7 @@ class GemsRepositoryImpl(
 
             Results.Success(true)
         } catch (e: Exception) {
-            Results.Error(Exception(e.message ?: "Failed to purchase gems"))
+            Results.Error(e.getSpecificException())
         }
     }
 
@@ -98,7 +98,7 @@ class GemsRepositoryImpl(
             Results.Success(true)
 
         } catch (e: Exception) {
-            Results.Error(Exception(e.message ?: "Failed to purchase book"))
+            Results.Error(e.getSpecificException())
         }
     }
 
@@ -110,17 +110,19 @@ class GemsRepositoryImpl(
     // --------------------
     // Get transaction history
     // --------------------
-    override suspend fun getTransactionHistory(uid: String): Results<List<Map<String, Any>>> {
+    override suspend fun getTransactionHistory(uid: String): Results<List<GemsTransaction>> {
         return try {
-            val txns = db.collection("wallet").document(uid)
+            Log.d(TAG, "getTransactionHistory: ")
+            val transactions = db.collection("wallet").document(uid)
                 .collection("transactions")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
-
-            Results.Success(txns.documents.map { it.data ?: emptyMap() })
+                .toObjects(GemsTransaction::class.java)
+            Log.d(TAG, "getTransactionHistory: $transactions")
+            Results.Success(transactions)
         } catch (e: Exception) {
-            Results.Error(Exception(e.message ?: "Failed to get transaction history"))
+            Results.Error(e.getSpecificException())
         }
     }
 

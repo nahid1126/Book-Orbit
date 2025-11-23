@@ -1,4 +1,4 @@
-package com.suffixit.smartadmin.core.utils
+package com.nahid.book_orbit.core.utils
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.CoroutineStart.LAZY

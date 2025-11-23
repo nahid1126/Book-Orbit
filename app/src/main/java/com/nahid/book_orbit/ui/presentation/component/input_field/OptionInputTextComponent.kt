@@ -20,8 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nahid.book_orbit.ui.theme.Gray
 import com.nahid.book_orbit.core.utils.AppConstants
-import com.suffixit.smartadmin.core.utils.extension.checkInputType
-import com.suffixit.smartadmin.core.utils.extension.equalIgnoreCase
+import com.nahid.book_orbit.core.utils.extension.checkInputType
+import com.nahid.book_orbit.core.utils.extension.equalIgnoreCase
 
 @Composable
 fun OptionInputTextComponent(question: InputQuestion, onAnswerChange: (String) -> Unit) {

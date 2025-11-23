@@ -12,8 +12,8 @@
       "filters": [],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "1.0",
-      "outputFile": "Book Orbit-v1.0(1)-r.apk"
+      "versionName": "1.0.0",
+      "outputFile": "Book Orbit-v1.0.0(1)-r.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/book_orbit-v1.0(1)-r.dm"
+        "baselineProfiles/1/Book Orbit-v1.0.0(1)-r.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/book_orbit-v1.0(1)-r.dm"
+        "baselineProfiles/0/Book Orbit-v1.0.0(1)-r.dm"
       ]
     }
   ],

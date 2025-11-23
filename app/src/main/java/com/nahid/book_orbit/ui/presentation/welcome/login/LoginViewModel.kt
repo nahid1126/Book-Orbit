@@ -43,7 +43,7 @@ class LoginViewModel(
                 is Results.Error -> {
                     uiState.copy(
                         isLoading = false,
-                        message = Pair(false, result.exception.getErrorMessage())
+                        message = result.exception.getErrorMessage()
                     )
                 }
 
@@ -57,7 +57,7 @@ class LoginViewModel(
                         isLoading = false,
                         isLoginSuccess = true,
                         userInfo = result.data,
-                        message = Pair(true, "Welcome")
+                        message = "Welcome"
                     )
                 }
             }
@@ -71,7 +71,7 @@ data class LoginUiState(
     val password: String = "r@321!",
     val androidId: String? = "123456789",
     val appVersion: String? = "4.5.0",
-    val message: Pair<Boolean, String>? = null,
+    val message: String?= null,
     val isLoginSuccess: Boolean = false,
     val userInfo: FirebaseUser? = null
 )
