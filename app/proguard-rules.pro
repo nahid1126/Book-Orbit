@@ -13,6 +13,10 @@
 -dontwarn javax.lang.model.**
 -dontwarn java.sql.JDBCType
 
+# Keep Firebase & Firestore Models
+-keep class com.nahid.book_orbit.data.remote.dto.** { *; }
+-keep class com.nahid.book_orbit.data.local.entity.** { *; }
+
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.examples.android.model.** { <fields>; }
 
