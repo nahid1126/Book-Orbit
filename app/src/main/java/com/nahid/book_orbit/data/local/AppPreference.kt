@@ -122,7 +122,7 @@ class AppPreference(private val dataStore: DataStore<Preferences>) {
 
     fun readUserGmail(): Flow<String> = dataStore.data.map { it[USER_GMAIL] ?: "" }
 
-    suspend fun storeTotalGems(totalGems: Long?): Boolean {
+    /*suspend fun storeTotalGems(totalGems: Long?): Boolean {
         return try {
             Log.d(TAG, "storeTotalGems: $totalGems")
             dataStore.edit {
@@ -136,5 +136,5 @@ class AppPreference(private val dataStore: DataStore<Preferences>) {
 
     fun readTotalGems(): Flow<Long> = dataStore.data.map {
         it[TOTAL_GEMS] ?: 0
-    }
+    }*/
 }

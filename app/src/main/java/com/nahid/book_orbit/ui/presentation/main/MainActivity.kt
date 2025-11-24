@@ -87,6 +87,7 @@ class MainActivity : ComponentActivity() {
                         finish()
                     }
                 }
+                viewModel.getGems()
                 if (state != null) {
                     App(viewModel, state!!)
                 }
@@ -117,9 +118,6 @@ class MainActivity : ComponentActivity() {
             AnimatedProgressDialog()
         }
         var selectedNavigationDestination by remember { mutableIntStateOf(0) }
-        LaunchedEffect(Unit) {
-            viewModel.readGems()
-        }
         if (uiState.showLogoutDialog) {
             ConfirmationDialog(
                 title = "Logout",

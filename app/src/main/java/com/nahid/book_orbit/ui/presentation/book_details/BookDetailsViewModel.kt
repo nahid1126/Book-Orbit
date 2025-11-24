@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 private const val TAG = "BookDetailsViewModel"
 
 class BookDetailsViewModel(
-    private val appPreference: AppPreference,
     private val bookRepository: BookRepository
 ) : ViewModel() {
     var uiState: BookDetailsUi by mutableStateOf(BookDetailsUi())
@@ -25,11 +24,6 @@ class BookDetailsViewModel(
     fun updateUiState(uiState: BookDetailsUi) {
         Log.d(TAG, "updateUiState: call")
         this.uiState = uiState
-    }
-    fun putGems() {
-        viewModelScope.launch {
-            appPreference.storeTotalGems(uiState.totalGems)
-        }
     }
 
     fun purchasesBook() {
@@ -92,7 +86,6 @@ class BookDetailsViewModel(
                         )
                     }
                     is Results.Success -> {
-                        getGems()
                         uiState.copy(
                             isLoading = false
                         )
@@ -102,30 +95,7 @@ class BookDetailsViewModel(
         }
     }
 
-    fun getGems() {
-        viewModelScope.launch {
-            if (uiState.uId.isNullOrEmpty()) {
-                uiState.copy(message = "User Name is Empty")
-            } else {
-                val response = bookRepository.getTotalGems(uiState.uId ?: "")
-                uiState = when (response) {
-                    is Results.Error -> {
-                        uiState.copy(
-                            isLoading = false,
-                            message = response.exception.message
-                        )
-                    }
 
-                    is Results.Success -> {
-                        uiState.copy(
-                            isLoading = false,
-                            totalGems = response.data,
-                        )
-                    }
-                }
-            }
-        }
-    }
 
     fun getPurchaseBooks() {
         viewModelScope.launch {

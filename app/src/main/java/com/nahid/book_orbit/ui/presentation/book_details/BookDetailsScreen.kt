@@ -118,9 +118,7 @@ fun BookDetailsScreen(
             if (viewModel.uiState.isLoading) {
                 CircularProgressDialog()
             }
-            if (viewModel.uiState.isBookPurchased){
-                viewModel.putGems()
-            }
+
 
             if (viewModel.uiState.message != null) {
                 Toast.makeText(

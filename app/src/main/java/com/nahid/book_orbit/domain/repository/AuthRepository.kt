@@ -5,4 +5,5 @@ import com.nahid.book_orbit.core.utils.Results
 
 interface AuthRepository {
     suspend fun signInWithGoogle(idToken: String): Results<FirebaseUser?>
+    suspend fun getTotalGems(): Results<Long>
 }

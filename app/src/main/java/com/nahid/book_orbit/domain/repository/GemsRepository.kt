@@ -9,6 +9,5 @@ interface GemsRepository {
     suspend fun getAllGems(): Results<List<Gems>>
     suspend fun purchaseGems(uid: String, gemsId: String): Results<Boolean>
     suspend fun getTransactionHistory(uid: String): Results<List<GemsTransaction>>
-    suspend fun getTotalGems(uid: String): Results<Long>
     //suspend fun isGemsPurchased(userId: String): Boolean
 }

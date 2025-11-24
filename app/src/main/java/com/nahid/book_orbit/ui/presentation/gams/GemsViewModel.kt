@@ -29,13 +29,7 @@ class GemsViewModel(
     init {
         getAllGems()
     }
-
-    fun putGems() {
-        viewModelScope.launch {
-            Log.d(TAG, "putGems: ${uiState.totalGems}")
-            appPreference.storeTotalGems(uiState.totalGems)
-        }
-    }
+    
     private fun getAllGems() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
@@ -56,31 +50,6 @@ class GemsViewModel(
             } catch (e: Exception) {
                 uiState =
                     uiState.copy(isLoading = false, message =  e.message.toString())
-            }
-        }
-    }
-    fun getGems() {
-        viewModelScope.launch {
-            if (uiState.uId.isNullOrEmpty()) {
-                uiState.copy(message = "User Name is Empty")
-            } else {
-                val response = gemsRepository.getTotalGems(uiState.uId ?: "")
-                uiState = when (response) {
-                    is Results.Error -> {
-                        uiState.copy(
-                            isLoading = false,
-                            message = response.exception.message
-                        )
-                    }
-
-                    is Results.Success -> {
-                        uiState.copy(
-                            isLoading = false,
-                            totalGems = response.data,
-                            isGemsPurchase = true
-                        )
-                    }
-                }
             }
         }
     }
@@ -105,7 +74,6 @@ class GemsViewModel(
                     }
 
                     is Results.Success -> {
-                       getGems()
                         uiState.copy(
                             isLoading = false,
                             message = "Gems Purchased Successfully"

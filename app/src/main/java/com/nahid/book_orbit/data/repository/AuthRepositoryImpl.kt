@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nahid.book_orbit.core.utils.Results
-import com.nahid.book_orbit.core.utils.exception.CustomException
 import com.nahid.book_orbit.core.utils.extension.getSpecificException
 import com.nahid.book_orbit.domain.repository.AuthRepository
 import kotlinx.coroutines.tasks.await
@@ -31,6 +30,24 @@ class AuthRepositoryImpl(
             }
         } catch (e: Exception) {
             Log.d(TAG, "signInWithGoogle: ${e.getSpecificException()}")
+            Results.Error(e.getSpecificException())
+        }
+    }
+
+    // --------------------
+    // Get total gems
+    // --------------------
+    override suspend fun getTotalGems(): Results<Long> {
+        return try {
+            val snap = db.collection("wallet")
+                .document(auth.currentUser?.uid.toString())
+                .get()
+                .await()
+
+            Log.d(TAG, "getTotalGems: ${auth.currentUser?.uid} ${snap.getLong("gems") ?: 0L}")
+            Results.Success(snap.getLong("gems") ?: 0L)
+        } catch (e: Exception) {
+            Log.d(TAG, "getTotalGems: ${e.message}")
             Results.Error(e.getSpecificException())
         }
     }

@@ -64,24 +64,6 @@ class GemsRepositoryImpl(
     }
 
 
-    // --------------------
-    // Get total gems
-    // --------------------
-    override suspend fun getTotalGems(uid: String): Results<Long> {
-        return try {
-            Log.d(TAG, "getTotalGems: $uid")
-            val snap = db.collection("wallet")
-                .document(uid)
-                .get()
-                .await()
-
-            Log.d(TAG, "getTotalGems: $uid ${snap.getLong("gems") ?: 0L}")
-            Results.Success(snap.getLong("gems") ?: 0L)
-        } catch (e: Exception) {
-            Log.d(TAG, "getTotalGems: ${e.message}")
-            Results.Error(e.getSpecificException())
-        }
-    }
 
     // --------------------
     // Get transaction history

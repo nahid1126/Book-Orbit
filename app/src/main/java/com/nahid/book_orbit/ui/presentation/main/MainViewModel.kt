@@ -50,22 +50,6 @@ class MainViewModel(
          }*/
     }
 
-    fun putGems(gems: Long) {
-        viewModelScope.launch {
-            appPreference.storeTotalGems(gems)
-            readGems()
-        }
-    }
-
-    fun readGems() {
-        viewModelScope.launch {
-            appPreference.readTotalGems().collect {
-                Log.d(TAG, "readGems: $it")
-                mutableUiState.update { state -> state.copy(gems = it) }
-            }
-        }
-    }
-
     fun observeLoggedInStatus(isLoggedIn: (Boolean) -> Unit) {
         viewModelScope.launch {
             appPreference.readToken().collect { token ->
@@ -96,6 +80,32 @@ class MainViewModel(
         }
     }
 
+    fun getGems() {
+        viewModelScope.launch {
+            val response = loginRepository.getTotalGems()
+            when (response) {
+                is Results.Error -> {
+                    mutableUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            message = response.exception.message
+                        )
+                    }
+                }
+
+                is Results.Success -> {
+                    Log.d(TAG, "getGems: ${response.data}")
+                    mutableUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            gems = response.data,
+                        )
+                    }
+                }
+            }
+
+        }
+    }
 
     fun updateApp(context: Context) {
         /*viewModelScope.launch {
