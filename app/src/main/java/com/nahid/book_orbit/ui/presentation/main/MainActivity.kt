@@ -38,7 +38,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,11 +51,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nahid.book_orbit.core.utils.AppConstants
-import com.nahid.book_orbit.core.utils.Logger
 import com.nahid.book_orbit.core.utils.NavigationDestinations
 import com.nahid.book_orbit.ui.navigation.Destinations
 import com.nahid.book_orbit.ui.navigation.NavGraph
-import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.welcome.WelcomeActivity
 import com.nahid.book_orbit.ui.theme.BookOrbitTheme
@@ -110,7 +108,7 @@ class MainActivity : ComponentActivity() {
             viewModel.updateUiState(uiState.copy(message = null))
         }
         if (uiState.isLoading) {
-            AnimatedProgressDialog()
+            CircularProgressDialog()
         }
         var selectedNavigationDestination by remember { mutableIntStateOf(0) }
         if (uiState.showLogoutDialog) {

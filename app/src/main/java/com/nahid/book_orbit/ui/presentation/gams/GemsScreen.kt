@@ -1,6 +1,7 @@
 package com.nahid.book_orbit.ui.presentation.gams
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.data.remote.dto.Gems
-import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
+import com.nahid.book_orbit.ui.theme.Black
+import com.nahid.book_orbit.ui.theme.Olive
+import com.nahid.book_orbit.ui.theme.White
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val TAG = "GemsScreen"
@@ -60,7 +64,7 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
         ) {
             if (viewModel.uiState.gemsList.isNullOrEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No gems available")
+                    Text("No gems available", color = Black)
                 }
             } else {
                 LazyVerticalGrid(
@@ -79,7 +83,7 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
             }
 
             if (viewModel.uiState.isLoading) {
-                AnimatedProgressDialog()
+                CircularProgressDialog()
             }
 
             if (!viewModel.uiState.message.isNullOrEmpty()) {
@@ -146,7 +150,8 @@ fun GemsPurchaseItem(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 24.dp),
+            border = BorderStroke(2.dp, Black)
         ) {
             Text(
                 text = "$${gems.usd}",
