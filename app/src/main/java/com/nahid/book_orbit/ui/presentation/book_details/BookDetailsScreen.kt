@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.data.remote.dto.Book
-import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
@@ -116,7 +116,7 @@ fun BookDetailsScreen(
                 )
             }
             if (viewModel.uiState.isLoading) {
-                CircularProgressDialog()
+                AnimatedProgressDialog()
             }
 
 

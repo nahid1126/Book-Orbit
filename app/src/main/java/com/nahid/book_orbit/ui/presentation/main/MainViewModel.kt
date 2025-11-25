@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.data.local.AppPreference
 import com.nahid.book_orbit.domain.repository.AuthRepository
@@ -74,8 +77,14 @@ class MainViewModel(
         }
     }
 
-    fun logout() {
+    fun logout(context: MainActivity) {
         viewModelScope.launch {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(AppConstants.WEB_CLIENT_ID) // Use the same client ID
+                .requestEmail()
+                .build()
+            val googleSignInClient = GoogleSignIn.getClient(context, gso)
+            googleSignInClient.signOut()
             appPreference.saveToken("")
         }
     }

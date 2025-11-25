@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.data.remote.dto.Gems
-import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -79,7 +79,7 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
             }
 
             if (viewModel.uiState.isLoading) {
-                CircularProgressDialog()
+                AnimatedProgressDialog()
             }
 
             if (!viewModel.uiState.message.isNullOrEmpty()) {

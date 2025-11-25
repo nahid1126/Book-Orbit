@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.nahid.book_orbit.data.remote.dto.Book
-import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.White
@@ -110,7 +110,7 @@ fun HomeScreen(
             }
 
             if (viewModel.uiState.isLoading) {
-                CircularProgressDialog()
+                AnimatedProgressDialog()
             }
 
             if (!viewModel.uiState.message.isNullOrEmpty()) {
@@ -146,7 +146,8 @@ fun BookGridItem(book: Book, onClick: (Book) -> Unit) {
             .clickable {
                 Log.d(TAG, "BookGridItem: $book")
                 onClick(book)
-            }.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp)),
+            }
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(

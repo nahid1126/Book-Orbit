@@ -11,8 +11,11 @@ import androidx.navigation.compose.rememberNavController
 import com.nahid.book_orbit.ui.navigation.Destinations
 import com.nahid.book_orbit.ui.navigation.SetUpNavGraph
 import com.nahid.book_orbit.ui.presentation.main.MainActivity
-import com.nahid.book_orbit.ui.theme.SuffixSurveyTheme
+import com.nahid.book_orbit.ui.theme.BookOrbitTheme
 import com.nahid.book_orbit.core.utils.AppConstants
+import com.nahid.book_orbit.ui.navigation.NavGraph
+import com.nahid.book_orbit.ui.presentation.main.MainViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 private const val TAG = "WelcomeActivity"
 
@@ -21,7 +24,7 @@ class WelcomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SuffixSurveyTheme(dynamicColor = false) {
+            BookOrbitTheme(dynamicColor = false) {
                 val initialStart = intent.getBooleanExtra(AppConstants.INITIAL_START, true)
                 App(initialStart)
             }
@@ -34,7 +37,7 @@ class WelcomeActivity : ComponentActivity() {
         val context = LocalContext.current
         SetUpNavGraph(navController, startDestinations = if (initialStart) Destinations.SplashScreen else Destinations.LoginScreen){
             startActivity(Intent(context, MainActivity::class.java))
-            finish()
+            finishAffinity()
         }
     }
 }

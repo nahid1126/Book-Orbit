@@ -1,5 +1,6 @@
 package com.nahid.book_orbit.ui.presentation.welcome.login
 
+import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -35,7 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.nahid.book_orbit.R
 import com.nahid.book_orbit.core.utils.AppConstants
-import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.theme.Black
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -68,10 +69,6 @@ fun LoginScreen(
             toHome()
         }
     }
-    BackHandler {
-        
-    }
-
     Scaffold { innerPadding ->
         Surface(
             color = MaterialTheme.colorScheme.surface,
@@ -137,7 +134,7 @@ fun LoginScreen(
             }
 
             if (state.isLoading) {
-                CircularProgressDialog()
+                AnimatedProgressDialog()
             }
         }
     }

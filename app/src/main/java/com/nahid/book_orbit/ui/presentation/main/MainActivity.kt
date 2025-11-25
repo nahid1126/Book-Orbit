@@ -36,7 +36,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +59,7 @@ import com.nahid.book_orbit.ui.navigation.NavGraph
 import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.welcome.WelcomeActivity
-import com.nahid.book_orbit.ui.theme.SuffixSurveyTheme
+import com.nahid.book_orbit.ui.theme.BookOrbitTheme
 import com.nahid.book_orbit.ui.theme.ToolbarTextColor
 import com.nahid.book_orbit.ui.theme.Typography
 import com.nahid.book_orbit.ui.theme.White
@@ -77,7 +76,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = koinViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-            SuffixSurveyTheme(darkTheme = false, dynamicColor = false) {
+            BookOrbitTheme(darkTheme = false, dynamicColor = false) {
 
                 viewModel.observeLoggedInStatus {
                     if (!it) {
@@ -105,10 +104,6 @@ class MainActivity : ComponentActivity() {
         val currentBackStack by navController.currentBackStackEntryAsState()
         val context = this
         val currentRoute = currentBackStack?.destination?.route
-        Logger.log(TAG, "currentRoute $currentRoute ${Destinations.Search}")
-
-        var expanded by remember { mutableStateOf(false) }
-        var selectedItem by remember { mutableIntStateOf(0) }
 
         if (!uiState.message.isNullOrEmpty()) {
             Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
@@ -126,7 +121,7 @@ class MainActivity : ComponentActivity() {
                     viewModel.updateUiState(uiState.copy(showLogoutDialog = false))
                 },
                 onConfirm = {
-                    viewModel.logout()
+                    viewModel.logout(context)
                     viewModel.updateUiState(uiState.copy(showLogoutDialog = false))
                 }
             )
@@ -299,7 +294,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     mainViewModel = viewModel,
                     onBottomNavigationChange = {
-                        selectedItem = it
+                        selectedNavigationDestination = it
                     }, onExit = {
                         finish()
                     })

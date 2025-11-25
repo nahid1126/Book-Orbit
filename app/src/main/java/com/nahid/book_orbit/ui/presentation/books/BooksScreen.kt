@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.data.remote.dto.Book
 import com.nahid.book_orbit.ui.presentation.book_details.BookDetailsViewModel
-import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
+import com.nahid.book_orbit.ui.presentation.component.AnimatedProgressDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
 import org.koin.compose.viewmodel.koinViewModel
@@ -82,7 +82,7 @@ fun BooksScreen(
             }
 
             if (viewModel.uiState.isLoading) {
-                CircularProgressDialog()
+                AnimatedProgressDialog()
             }
 
             if (!viewModel.uiState.message.isNullOrEmpty()) {

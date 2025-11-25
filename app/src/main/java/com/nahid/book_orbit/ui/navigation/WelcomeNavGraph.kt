@@ -31,6 +31,10 @@ fun SetUpNavGraph(
         }
 
         composable<Destinations.LoginScreen> {
+            val context = LocalContext.current
+            BackHandler {
+                (context as? Activity)?.finishAffinity()
+            }
             LoginScreen(toHome = {
                 onFinish()
             }
