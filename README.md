@@ -9,8 +9,7 @@ A **showcase Android app** built with **modern tools to highlight my Android dev
 - 🚀 **Modern UI:** Jetpack Compose.  
 - 🏗 **Architecture:** MVVM.  
 - 🔧 **Dependency Injection:** Koin.
-- :clamp: **Framework for asynchronous servers:** Ktor.
-- 🔄 **Reactive State Management:** StateFlow for real-time UI updates.  
+- 🔄 **Reactive State Management:** StateFlow for real-time UI updates, Ktor for building asynchronous servers.  
 - 🧭 **Navigation:** Jetpack Compose Navigation with type-safe data passing between screens.  
 
 ---
@@ -23,8 +22,7 @@ A **showcase Android app** built with **modern tools to highlight my Android dev
 | **UI** | Jetpack Compose, Material 3 |
 | **Architecture** | MVVM |
 | **DI** | Koin |
-| **Framework** | Ktor |
-| **Async / Reactive** | Kotlin Coroutines, StateFlow |
+| **Async / Reactive** | Kotlin Coroutines, StateFlow, Ktor |
 | **Online Storage** | Firebase |
 | **Navigation** | Jetpack Compose Navigation |
 
