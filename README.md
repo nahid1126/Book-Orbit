@@ -1,0 +1,72 @@
+# :books: Book Orbit | Android
+
+A **showcase Android app** built with **modern tools to highlight my Android development skills.  
+
+---
+
+## ✨ Features
+
+- 🚀 **Modern UI:** Jetpack Compose.  
+- 🏗 **Architecture:** MVVM.  
+- 🔧 **Dependency Injection:** Koin.
+- :clamp: **Framework for asynchronous servers:** Ktor.
+- 🔄 **Reactive State Management:** StateFlow for real-time UI updates.  
+- 🧭 **Navigation:** Jetpack Compose Navigation with type-safe data passing between screens.  
+
+---
+
+## 🛠 Tech Stack
+
+| Category | Tools / Libraries |
+|-----------|------------------|
+| **Language** | Kotlin |
+| **UI** | Jetpack Compose, Material 3 |
+| **Architecture** | MVVM |
+| **DI** | Koin |
+| **Framework** | Ktor |
+| **Async / Reactive** | Kotlin Coroutines, StateFlow |
+| **Online Storage** | Firebase |
+| **Navigation** | Jetpack Compose Navigation |
+
+---
+
+## 🌗 App Image
+
+
+  <img width="200" height="400" alt="1" src="https://github.com/user-attachments/assets/d94a0413-e44c-42d5-a56e-c6b493eb9816" />
+  &nbsp;&nbsp;&nbsp;
+ <img width="200" height="400" alt="2" src="https://github.com/user-attachments/assets/63be60ba-48d5-4c9c-8217-a339760db852" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="3" src="https://github.com/user-attachments/assets/6e668a71-2579-4b49-bda8-c6b32ab8e050" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="4" src="https://github.com/user-attachments/assets/dd99239f-a9ca-4ec5-bf2a-a085737c015f" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="5" src="https://github.com/user-attachments/assets/912ebc97-46c8-43e6-afb1-13741675c36e" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="6" src="https://github.com/user-attachments/assets/1d0c6776-f57e-4b95-bd84-a909127f80d5" />
+</p> 
+
+
+---
+
+## 🔥 Learning Outcomes
+
+- Mastered **modern Android app architecture** (Clean Architecture + modularization).  
+- Practiced **dependency injection**, **reactive UI**, and **offline caching** techniques.  
+- Improved skills in **network error handling**, **state management**, and **Compose UI** patterns.  
+
+---
+
+
+## 📸 Author  
+
+**Nahid Hasan**  
+💼 Android Developer
+📍 Bangladesh  
+🔗 [**GitHub Profile**](https://github.com/nahid1126)
+
+---
+
+<p align="center">
+  ⭐ <em>If you like this project, please star the repo — it helps more people discover it!</em>
+</p>
