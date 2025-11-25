@@ -50,7 +50,7 @@ A **showcase Android app** built with **modern tools to highlight my Android dev
 ## 🔥 Learning Outcomes
 
 - Mastered **modern Android app architecture** (Clean Architecture + modularization).  
-- Practiced **dependency injection**, **reactive UI**, and **offline caching** techniques.  
+- Practiced **dependency injection**, **reactive UI**, **PDF View** techniques and ****.  
 - Improved skills in **network error handling**, **state management**, and **Compose UI** patterns.  
 
 ---
