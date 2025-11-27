@@ -14,6 +14,7 @@ import com.nahid.book_orbit.ui.presentation.gams.GemsScreen
 import com.nahid.book_orbit.ui.presentation.gams.HistoryScreen
 import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
+import com.nahid.book_orbit.ui.presentation.profile.PrivacyAndPolicyScreen
 import com.nahid.book_orbit.ui.presentation.profile.ProfileScreen
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -72,7 +73,9 @@ fun NavGraph(
                     launchSingleTop = true
                 }
             }
-            ProfileScreen(sharedViewModel = mainViewModel)
+            ProfileScreen(sharedViewModel = mainViewModel, toPrivacyAndPolicy = {
+                navController.navigate(Destinations.PrivacyAndPolicy)
+            })
         }
 
         composable<Destinations.BuyGems> {
@@ -104,6 +107,11 @@ fun NavGraph(
             }
             HistoryScreen(sharedViewModel = mainViewModel)
         }
+
+        composable<Destinations.PrivacyAndPolicy> {
+            PrivacyAndPolicyScreen(sharedViewModel = mainViewModel)
+        }
+
     }
 
 }
