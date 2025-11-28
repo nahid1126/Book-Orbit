@@ -33,7 +33,11 @@ import com.nahid.book_orbit.ui.theme.Typography
 import com.nahid.book_orbit.ui.theme.White
 
 @Composable
-fun ProfileScreen(sharedViewModel: MainViewModel, toPrivacyAndPolicy: () -> Unit) {
+fun ProfileScreen(
+    sharedViewModel: MainViewModel,
+    toPrivacyAndPolicy: () -> Unit,
+    toTermsAndCondition: () -> Unit
+) {
     val context = LocalContext.current
     sharedViewModel.updateTitle("Profile")
     val state = sharedViewModel.uiState.collectAsState()
@@ -56,7 +60,11 @@ fun ProfileScreen(sharedViewModel: MainViewModel, toPrivacyAndPolicy: () -> Unit
                     .size(90.dp)
             )
             if (state.value.gmail.isNotEmpty()) {
-                Text(text = state.value.gmail, color = Black, modifier = Modifier.padding(AppConstants.APP_MARGIN.dp))
+                Text(
+                    text = state.value.gmail,
+                    color = Black,
+                    modifier = Modifier.padding(AppConstants.APP_MARGIN.dp)
+                )
             }
             Button(
                 onClick = {
@@ -111,7 +119,9 @@ fun ProfileScreen(sharedViewModel: MainViewModel, toPrivacyAndPolicy: () -> Unit
                     modifier = Modifier.padding(
                         start = 34.dp,
                         bottom = (AppConstants.APP_MARGIN).dp
-                    )
+                    ).clickable{
+                        toTermsAndCondition()
+                    }
                 )
                 Text(
                     "Privacy Policy",
@@ -154,7 +164,7 @@ fun ProfileScreen(sharedViewModel: MainViewModel, toPrivacyAndPolicy: () -> Unit
                         fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier
-                        .clickable {
+                        /*.clickable {
                             val sendIntent: Intent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(
@@ -166,7 +176,7 @@ fun ProfileScreen(sharedViewModel: MainViewModel, toPrivacyAndPolicy: () -> Unit
                             val shareIntent =
                                 Intent.createChooser(sendIntent, "Share Book Orbit App")
                             context.startActivity(shareIntent)
-                        }
+                        }*/
                         .padding(
                             start = 34.dp,
                             bottom = (AppConstants.APP_MARGIN).dp

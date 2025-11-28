@@ -16,6 +16,7 @@ import com.nahid.book_orbit.ui.presentation.home.HomeScreen
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.presentation.profile.PrivacyAndPolicyScreen
 import com.nahid.book_orbit.ui.presentation.profile.ProfileScreen
+import com.nahid.book_orbit.ui.presentation.profile.TermsAndConditionScreen
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 
@@ -75,6 +76,8 @@ fun NavGraph(
             }
             ProfileScreen(sharedViewModel = mainViewModel, toPrivacyAndPolicy = {
                 navController.navigate(Destinations.PrivacyAndPolicy)
+            }, toTermsAndCondition = {
+                navController.navigate(Destinations.TermsAndConditions)
             })
         }
 
@@ -110,6 +113,9 @@ fun NavGraph(
 
         composable<Destinations.PrivacyAndPolicy> {
             PrivacyAndPolicyScreen(sharedViewModel = mainViewModel)
+        }
+        composable<Destinations.TermsAndConditions> {
+            TermsAndConditionScreen(sharedViewModel = mainViewModel)
         }
 
     }
