@@ -110,7 +110,8 @@ dependencies {
     // PDF viewer
     implementation (libs.accompanist.webview)
 
-
+// in app billing
+    implementation (libs.billing.ktx)
 
 
 
