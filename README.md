@@ -11,26 +11,28 @@ A **showcase Android app** built with **modern tools to highlight my Android dev
 - 🔧 **Dependency Injection:** Koin.
 - 🔄 **Reactive State Management:** StateFlow for real-time UI updates, Ktor for building asynchronous servers.  
 - 🧭 **Navigation:** Jetpack Compose Navigation with type-safe data passing between screens.  
+- :money_with_wings: **In App Billing** For buy gems to get book
 
 ---
 
 ## 🛠 Tech Stack
 
-| Category | Tools / Libraries |
-|-----------|------------------|
-| **Language** | Kotlin |
-| **UI** | Jetpack Compose, Material 3 |
-| **Architecture** | MVVM |
-| **DI** | Koin |
+| Category             | Tools / Libraries                  |
+|----------------------|------------------------------------|
+| **Language**         | Kotlin                             |
+| **UI**               | Jetpack Compose, Material 3        |
+| **Architecture**     | MVVM                               |
+| **DI**               | Koin                               |
 | **Async / Reactive** | Kotlin Coroutines, StateFlow, Ktor |
-| **Online Storage** | Firebase |
-| **Navigation** | Jetpack Compose Navigation |
+| **Online Storage**   | Firebase                           |
+| **Navigation**       | Jetpack Compose Navigation         |
+| **In App Billing**   | Google Play Billing                |
 
 ---
 
 ## 🌗 App Image
 
-
+<p>
   <img width="200" height="400" alt="1" src="https://github.com/user-attachments/assets/d94a0413-e44c-42d5-a56e-c6b493eb9816" />
   &nbsp;&nbsp;&nbsp;
  <img width="200" height="400" alt="2" src="https://github.com/user-attachments/assets/63be60ba-48d5-4c9c-8217-a339760db852" />
