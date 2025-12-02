@@ -17,7 +17,9 @@ import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.consumePurchase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.nahid.book_orbit.core.utils.PurchaseResult
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.domain.repository.BillingRepository
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -188,6 +191,44 @@ class BillingRepositoryImpl(
                     channel.trySend(PurchaseResult.Error("Grant failed"))
                     channel.close()
                     return
+                } else {
+                    val walletRef =
+                        firestore.collection("wallet").document(firebaseAuth.currentUser?.uid ?: "")
+
+                    val gemsMap = mapOf(
+                        "nahid.book_orbit.gems.1" to 200L,
+                        "nahid.book_orbit.gems.2" to 420L,
+                        "nahid.book_orbit.gems.3" to 650L,
+                        "nahid.book_orbit.gems.4" to 1100L,
+                        "nahid.book_orbit.gems.5" to 1600L,
+                        "nahid.book_orbit.gems.6" to 2400L,
+                        "nahid.book_orbit.gems.7" to 3600L,
+                        "nahid.book_orbit.gems.8" to 5200L
+                    )
+                    val gemsAmount = purchase.products.sumOf { productId ->
+                        gemsMap[productId] ?: 0L
+                    }
+
+                    if (gemsAmount > 0) {
+                        firestore.runTransaction { trx ->
+                            val snap = trx.get(walletRef)
+                            val currentGems = snap.getLong("gems") ?: 0L
+                            // 2. Add the correct gem amount
+                            val newGems = currentGems + gemsAmount
+
+                            trx.set(walletRef, mapOf("gems" to newGems), SetOptions.merge())
+
+                            val txnRef = walletRef.collection("transactions").document()
+                            trx.set(
+                                txnRef, mapOf(
+                                    // 3. Use the defined gemsAmount variable
+                                    "gemsAmount" to gemsAmount,
+                                    "timestamp" to FieldValue.serverTimestamp()
+                                )
+                            )
+                        }.await()
+                    }
+
                 }
 
                 // 3️⃣ Consume purchase
