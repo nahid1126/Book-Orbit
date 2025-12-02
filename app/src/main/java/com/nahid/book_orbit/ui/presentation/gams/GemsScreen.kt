@@ -1,8 +1,8 @@
 package com.nahid.book_orbit.ui.presentation.gams
 
+import android.app.Activity
+import android.icu.util.Currency
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,8 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.billingclient.api.ProductDetails
 import com.nahid.book_orbit.core.utils.AppConstants
-import com.nahid.book_orbit.data.remote.dto.Gems
 import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
@@ -52,6 +52,7 @@ fun GemsScreen(
     billingViewModel: BillingViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val activity = context as? Activity
     LaunchedEffect(Unit) {
         sharedViewModel.updateTitle("Buy Gems")
         viewModel.updateUiState(viewModel.uiState.copy(uId = sharedViewModel.uiState.value.userName))
@@ -65,7 +66,7 @@ fun GemsScreen(
                 .fillMaxSize()
                 .padding(bottom = (AppConstants.APP_MARGIN).dp)
         ) {
-            if (viewModel.uiState.gemsList.isNullOrEmpty()) {
+            if (billingViewModel.uiState.productList.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("No gems available", color = Black)
                 }
@@ -77,22 +78,24 @@ fun GemsScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(viewModel.uiState.gemsList!!) { book ->
-                        GemsPurchaseItem(book){
-                            viewModel.updateUiState(viewModel.uiState.copy(gemsId = it, showExitDialog = true))
+                    items(billingViewModel.uiState.productList) { product ->
+                        ProductDetailsItem(product) {
+                            billingViewModel.updateSelectedProduct(it)
+                            activity?.let { billingViewModel.purchase(it) }
+                            //viewModel.updateUiState(viewModel.uiState.copy(gemsId = it, showExitDialog = true))
                         }
                     }
                 }
             }
 
-            if (viewModel.uiState.isLoading) {
+            if (billingViewModel.uiState.isLoading) {
                 CircularProgressDialog()
             }
 
-            if (!viewModel.uiState.message.isNullOrEmpty()) {
+            /*if (!viewModel.uiState.message.isNullOrEmpty()) {
                 Toast.makeText(context, viewModel.uiState.message, Toast.LENGTH_SHORT).show()
                 viewModel.updateUiState( viewModel.uiState.copy(message = null))
-            }
+            }*/
             if (viewModel.uiState.showExitDialog){
                 ConfirmationDialog(
                     title = "Warning !",
@@ -116,11 +119,18 @@ fun GemsScreen(
     }
 }
 
+
 @Composable
-fun GemsPurchaseItem(
-    gems: Gems,
-    onPurchaseClick: (String) -> Unit
+fun ProductDetailsItem(
+    productDetails: ProductDetails,
+    onPurchaseClick: (ProductDetails) -> Unit
 ) {
+    // Assuming the "name" field contains the amount of gems, e.g., "200"
+    val gemsAmount = productDetails.name
+    val price = productDetails.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
+    val currencyCode = productDetails.oneTimePurchaseOfferDetails?.priceCurrencyCode ?: ""
+    val finalPrice = getCurrencySymbol(price, currencyCode)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,32 +150,50 @@ fun GemsPurchaseItem(
             imageVector = Icons.Default.Diamond,
             contentDescription = "Gems",
             modifier = Modifier.size(80.dp),
-            tint = Color(0xFF_624_7AA)
+            tint = Color(0xFF_624_7AA) // A distinct purple color for the icon
         )
 
         Text(
-            text = "${gems.gemsAmount}",
+            text = gemsAmount,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
         Button(
-            onClick = { onPurchaseClick(gems.id) },
+            onClick = { onPurchaseClick(productDetails) },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            border = BorderStroke(2.dp, Black)
+                .padding(horizontal = 20.dp)
         ) {
             Text(
-                text = "$${gems.usd}",
+                text = finalPrice,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
         }
     }
 }
+
+fun getCurrencySymbol(formattedPrice: String, currencyCode: String): String {
+    val cleanedPrice = formattedPrice.replace(Regex("[^\\d.,]"), "") // "1,400.00"
+
+    val priceValue = cleanedPrice.replace(",", "").toDoubleOrNull() ?: 0.0
+
+    val currencySymbol = when (currencyCode) {
+        "BDT" -> "৳"
+
+        else -> try {
+            Currency.getInstance(currencyCode).symbol
+        } catch (e: Exception) {
+            currencyCode
+        }
+    }
+    return "$currencySymbol%.2f".format(priceValue)
+}
+
 

@@ -24,6 +24,17 @@
 -keep class com.nahid.book_orbit.data.local.entity.** { <fields>; }
 
 
+
+
+# Keep Google BillingClient classes
+-keep class com.android.billingclient.** { *; }
+
+# Keep PurchasesUpdatedListener lambdas
+-keepclassmembers class * implements com.android.billingclient.api.PurchasesUpdatedListener {
+    public void onPurchasesUpdated(...);
+}
+
+
  # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).
 
  # With R8 full mode generic signatures are stripped for classes that are not

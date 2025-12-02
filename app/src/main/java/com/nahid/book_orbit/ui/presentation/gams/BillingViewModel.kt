@@ -1,17 +1,20 @@
 package com.nahid.book_orbit.ui.presentation.gams
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.Purchase
 import com.nahid.book_orbit.core.utils.PurchaseResult
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.domain.repository.BillingRepository
 import kotlinx.coroutines.launch
 
+private const val TAG = "BillingViewModel"
 class BillingViewModel(
     private val billingRepository: BillingRepository
 ) : ViewModel() {
@@ -71,15 +74,18 @@ class BillingViewModel(
         val product = uiState.selectedProduct ?: return
 
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
+            //uiState = uiState.copy(isLoading = true)
 
             billingRepository.purchase(product, activity)
                 .collect { result ->
-
+                    Log.d(TAG, "purchase: $result")
                     uiState = uiState.copy(
                         isLoading = false,
                         purchaseResult = result
                     )
+                    if (result is PurchaseResult.Consumed) {
+                        restorePendingPurchases()
+                    }
                 }
         }
     }
@@ -92,11 +98,14 @@ class BillingViewModel(
             when (val result = billingRepository.restorePurchases()) {
                 is Results.Success -> {
                     result.data.forEach { purchase ->
-                        billingRepository.consumeAndGrantPurchase(purchase)
+                        if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged) {
+                            billingRepository.processRestoredPurchase(purchase)
+                        }
                     }
                 }
+
                 is Results.Error -> {
-                    // ignore or show message
+                    Log.e(TAG, "Restore failed: ${result.exception.message}")
                 }
             }
         }

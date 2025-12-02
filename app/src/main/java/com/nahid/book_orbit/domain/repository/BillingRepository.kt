@@ -17,6 +17,5 @@ interface BillingRepository {
     ): Flow<PurchaseResult>
 
     suspend fun restorePurchases(): Results<List<Purchase>>
-
-    suspend fun consumeAndGrantPurchase(purchase: Purchase): Results<Boolean>
+    suspend fun processRestoredPurchase(purchase: Purchase)
 }

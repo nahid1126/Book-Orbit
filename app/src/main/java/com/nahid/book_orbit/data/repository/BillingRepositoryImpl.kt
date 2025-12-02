@@ -3,6 +3,7 @@ package com.nahid.book_orbit.data.repository
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
@@ -17,18 +18,17 @@ import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.consumePurchase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.nahid.book_orbit.core.utils.PurchaseResult
 import com.nahid.book_orbit.core.utils.Results
 import com.nahid.book_orbit.domain.repository.BillingRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -43,7 +43,7 @@ class BillingRepositoryImpl(
 
     private val billingClient: BillingClient
     private val purchaseUpdatesFlow =
-        MutableSharedFlow<Pair<BillingResult, List<Purchase>?>>(replay = 0)
+        MutableSharedFlow<Pair<BillingResult, List<Purchase>?>>(replay = 1)
 
     init {
         val listener = PurchasesUpdatedListener { billingResult, purchases ->
@@ -74,18 +74,14 @@ class BillingRepositoryImpl(
             }
 
             override fun onBillingServiceDisconnected() {
-                // Retry
                 connectBillingClient()
             }
         })
     }
 
-    // -------------------------------------------------------------
-    // PRODUCTS
-    // -------------------------------------------------------------
+    // ------------------ PRODUCTS ------------------
     override suspend fun getAvailableProducts(productIds: List<String>): Results<List<ProductDetails>> =
         suspendCoroutine { cont ->
-
             if (!billingClient.isReady) {
                 cont.resume(Results.Error(Exception("BillingClient not ready")))
                 return@suspendCoroutine
@@ -111,9 +107,7 @@ class BillingRepositoryImpl(
             }
         }
 
-    // -------------------------------------------------------------
-    // PURCHASE FLOW
-    // -------------------------------------------------------------
+    // ------------------ PURCHASE FLOW ------------------
     override fun purchase(
         productDetails: ProductDetails,
         activity: Activity
@@ -127,12 +121,11 @@ class BillingRepositoryImpl(
 
         val job = launch {
             purchaseUpdatesFlow.collect { (billingResult, purchases) ->
-
                 when (billingResult.responseCode) {
                     BillingClient.BillingResponseCode.OK -> {
                         if (!purchases.isNullOrEmpty()) {
                             val purchase = purchases.first()
-                            processPurchase(purchase, this@callbackFlow)
+                            launch { processPurchase(purchase, this@callbackFlow) }
                         } else {
                             trySend(PurchaseResult.Error("Purchase OK but no data"))
                             close()
@@ -162,6 +155,7 @@ class BillingRepositoryImpl(
             ).build()
 
         val result = billingClient.launchBillingFlow(activity, flowParams)
+        Log.d(TAG, "launchBillingFlow result: $result")
         if (result.responseCode != BillingClient.BillingResponseCode.OK) {
             trySend(PurchaseResult.Error("Failed to launch billing flow: ${result.debugMessage}"))
             close()
@@ -170,33 +164,86 @@ class BillingRepositoryImpl(
         awaitClose { job.cancel() }
     }
 
+    // ------------------ PROCESS PURCHASE ------------------
     private suspend fun processPurchase(
         purchase: Purchase,
-        channel: kotlinx.coroutines.channels.ProducerScope<PurchaseResult>
+        channel: ProducerScope<PurchaseResult>
     ) {
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
-                val granted = verifyAndGrant(purchase)
-                if (granted) {
-                    val consumed = consumePurchase(purchase)
-                    channel.trySend(
-                        if (consumed) PurchaseResult.Consumed else PurchaseResult.Error(
-                            "Verified but failed to consume"
-                        )
-                    )
-                } else {
-                    channel.trySend(PurchaseResult.Error("Verification failed"))
+
+                // 1️⃣ Acknowledge
+                if (!purchase.isAcknowledged) {
+                    val ackResult = acknowledgePurchase(purchase)
+                    if (!ackResult) {
+                        channel.trySend(PurchaseResult.Error("Acknowledge failed"))
+                        channel.close()
+                        return
+                    }
                 }
+
+                // 2️⃣ Optional: Grant gems / coins in Firestore
+                val granted = grantPurchase(purchase)
+                if (!granted) {
+                    channel.trySend(PurchaseResult.Error("Grant failed"))
+                    channel.close()
+                    return
+                }
+
+                // 3️⃣ Consume purchase
+                val consumed = consumePurchase(purchase)
+                channel.trySend(
+                    if (consumed) PurchaseResult.Consumed else PurchaseResult.Error("Consume failed")
+                )
+                channel.close()
             }
 
-            Purchase.PurchaseState.PENDING -> channel.trySend(PurchaseResult.Pending)
+            Purchase.PurchaseState.PENDING -> {
+                channel.trySend(PurchaseResult.Pending)
+            }
         }
-        channel.close()
     }
 
-    // -------------------------------------------------------------
-    // RESTORE PURCHASES
-    // -------------------------------------------------------------
+    private suspend fun acknowledgePurchase(purchase: Purchase): Boolean =
+        suspendCoroutine { cont ->
+            val params = AcknowledgePurchaseParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+
+            billingClient.acknowledgePurchase(params) { result ->
+                cont.resume(result.responseCode == BillingClient.BillingResponseCode.OK)
+            }
+        }
+
+    private suspend fun grantPurchase(purchase: Purchase): Boolean = withContext(Dispatchers.IO) {
+        try {
+            // Optional: skip if you don't need Firestore
+            /*
+            val user = firebaseAuth.currentUser ?: return@withContext false
+            val userDoc = firestore.collection("wallets").document(user.uid)
+            val gems = ... // map productId to gems
+            firestore.runTransaction { tx ->
+                val snapshot = tx.get(userDoc)
+                val current = snapshot.getLong("gems") ?: 0L
+                tx.set(userDoc, mapOf("gems" to (current + gems)), SetOptions.merge())
+            }.await()
+            */
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Grant failed", e)
+            false
+        }
+    }
+
+    private suspend fun consumePurchase(purchase: Purchase): Boolean = withContext(Dispatchers.IO) {
+        val params = ConsumeParams.newBuilder()
+            .setPurchaseToken(purchase.purchaseToken)
+            .build()
+        val result = billingClient.consumePurchase(params)
+        result.billingResult.responseCode == BillingClient.BillingResponseCode.OK
+    }
+
+    // ------------------ RESTORE PURCHASES ------------------
     override suspend fun restorePurchases(): Results<List<Purchase>> =
         suspendCancellableCoroutine { cont ->
             val params = QueryPurchasesParams.newBuilder()
@@ -211,65 +258,15 @@ class BillingRepositoryImpl(
                 }
             }
         }
-
-    // -------------------------------------------------------------
-    // CONSUME + GRANT GEMS
-    // -------------------------------------------------------------
-    override suspend fun consumeAndGrantPurchase(purchase: Purchase): Results<Boolean> =
-        try {
-            val granted = verifyAndGrant(purchase)
-            if (granted) {
-                val consumed = consumePurchase(purchase)
-                Results.Success(consumed)
-            } else Results.Error(Exception("Verification failed"))
-        } catch (e: Exception) {
-            Results.Error(e)
+    override suspend fun processRestoredPurchase(purchase: Purchase) {
+        if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged) {
+            // Acknowledge
+            acknowledgePurchase(purchase)
+            // Optional: Grant gems
+            grantPurchase(purchase)
+            // Consume
+            consumePurchase(purchase)
         }
-
-    private suspend fun verifyAndGrant(purchase: Purchase): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val user = firebaseAuth.currentUser ?: return@withContext false
-            val userDoc = firestore.collection("wallets").document(user.uid)
-
-            val gems = purchase.products.firstOrNull()?.let { id ->
-                when (id) {
-                    "nahid.book_orbit.gems.1" -> 200
-                    "nahid.book_orbit.gems.2" -> 420
-                    "nahid.book_orbit.gems.3" -> 650
-                    "nahid.book_orbit.gems.4" -> 1100
-                    "nahid.book_orbit.gems.5" -> 1600
-                    "nahid.book_orbit.gems.6" -> 2400
-                    "nahid.book_orbit.gems.7" -> 3600
-                    "nahid.book_orbit.gems.8" -> 5200
-                    else -> 0
-                }
-            } ?: 0
-
-            if (gems == 0) return@withContext false
-
-            firestore.runTransaction { tx ->
-                val snapshot = tx.get(userDoc)
-                val current = snapshot.getLong("gems") ?: 0L
-                tx.set(userDoc, mapOf("gems" to (current + gems)), SetOptions.merge())
-                null
-            }.await()
-
-            true
-        } catch (e: Exception) {
-            Log.e(TAG, "Granting gems failed", e)
-            false
-        }
-    }
-
-    private suspend fun consumePurchase(purchase: Purchase): Boolean = withContext(Dispatchers.IO) {
-        val params = ConsumeParams.newBuilder()
-            .setPurchaseToken(purchase.purchaseToken)
-            .build()
-        val result = billingClient.consumePurchase(params)
-        result.billingResult.responseCode == BillingClient.BillingResponseCode.OK
-    }
-
-    companion object {
-        private const val TAG = "BillingRepositoryImpl"
     }
 }
+
