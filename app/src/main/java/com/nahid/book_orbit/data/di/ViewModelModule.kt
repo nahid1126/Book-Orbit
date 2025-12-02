@@ -1,6 +1,7 @@
 package com.nahid.book_orbit.data.di
 
 import com.nahid.book_orbit.ui.presentation.book_details.BookDetailsViewModel
+import com.nahid.book_orbit.ui.presentation.gams.BillingViewModel
 import com.nahid.book_orbit.ui.presentation.gams.GemsViewModel
 import com.nahid.book_orbit.ui.presentation.home.HomeScreenViewModel
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
@@ -20,4 +21,5 @@ val viewModelModule = module {
     }
     viewModel { BookDetailsViewModel(get()) }
     viewModel { GemsViewModel(get(),get()) }
+    viewModel { BillingViewModel(get()) }
 }

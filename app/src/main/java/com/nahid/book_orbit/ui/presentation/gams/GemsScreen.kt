@@ -1,5 +1,6 @@
 package com.nahid.book_orbit.ui.presentation.gams
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -40,14 +41,16 @@ import com.nahid.book_orbit.ui.presentation.component.CircularProgressDialog
 import com.nahid.book_orbit.ui.presentation.component.ConfirmationDialog
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
-import com.nahid.book_orbit.ui.theme.Olive
-import com.nahid.book_orbit.ui.theme.White
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val TAG = "GemsScreen"
 
 @Composable
-fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinViewModel()) {
+fun GemsScreen(
+    sharedViewModel: MainViewModel,
+    viewModel: GemsViewModel = koinViewModel(),
+    billingViewModel: BillingViewModel = koinViewModel()
+) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         sharedViewModel.updateTitle("Buy Gems")
@@ -104,6 +107,10 @@ fun GemsScreen(sharedViewModel: MainViewModel, viewModel: GemsViewModel = koinVi
                         viewModel.updateUiState(viewModel.uiState.copy(showExitDialog = false))
                     }
                 )
+            }
+            
+            if (billingViewModel.uiState.productList.isNotEmpty()){
+                Log.d(TAG, "GemsScreen: ${billingViewModel.uiState.productList}")
             }
         }
     }
