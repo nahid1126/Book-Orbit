@@ -126,7 +126,7 @@ fun ProductDetailsItem(
     onPurchaseClick: (ProductDetails) -> Unit
 ) {
     // Assuming the "name" field contains the amount of gems, e.g., "200"
-    val gemsAmount = productDetails.name
+    val gemsAmount = productDetails.description
     val price = productDetails.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
     val currencyCode = productDetails.oneTimePurchaseOfferDetails?.priceCurrencyCode ?: ""
     val finalPrice = getCurrencySymbol(price, currencyCode)
@@ -146,18 +146,17 @@ fun ProductDetailsItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.Diamond,
-            contentDescription = "Gems",
-            modifier = Modifier.size(80.dp),
-            tint = Color(0xFF_624_7AA) // A distinct purple color for the icon
-        )
-
         Text(
             text = gemsAmount,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Icon(
+            imageVector = Icons.Default.Diamond,
+            contentDescription = "Gems",
+            modifier = Modifier.size(80.dp),
+            tint = Color(0xFF_624_7AA)
         )
 
         Button(
