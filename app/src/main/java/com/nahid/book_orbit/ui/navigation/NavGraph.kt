@@ -98,6 +98,12 @@ fun NavGraph(
             } else {
                 Json.decodeFromString<Book>(arguments.book)
             }
+            BackHandler {
+                navController.navigate(Destinations.Home) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
             BookDetailsScreen(finalBook, sharedViewModel = mainViewModel)
         }
 
