@@ -39,11 +39,16 @@ A **showcase Android app** built with **modern tools to highlight my Android dev
   &nbsp;&nbsp;&nbsp;
   <img width="200" height="400" alt="3" src="https://github.com/user-attachments/assets/6e668a71-2579-4b49-bda8-c6b32ab8e050" />
   &nbsp;&nbsp;&nbsp;
-  <img width="200" height="400" alt="4" src="https://github.com/user-attachments/assets/dd99239f-a9ca-4ec5-bf2a-a085737c015f" />
+  <img width="200" height="400" alt="4" src="https://github.com/user-attachments/assets/fd49c61e-a60e-4456-ab05-3f4eb5b27591" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="8" src="https://github.com/user-attachments/assets/61780a9b-07ad-48b7-81aa-509105e166c6" />
   &nbsp;&nbsp;&nbsp;
   <img width="200" height="400" alt="5" src="https://github.com/user-attachments/assets/912ebc97-46c8-43e6-afb1-13741675c36e" />
   &nbsp;&nbsp;&nbsp;
   <img width="200" height="400" alt="6" src="https://github.com/user-attachments/assets/1d0c6776-f57e-4b95-bd84-a909127f80d5" />
+  &nbsp;&nbsp;&nbsp;
+  <img width="200" height="400" alt="7" src="https://github.com/user-attachments/assets/bdd4cdd8-c566-411d-8f0a-ec059feaaf12" />
+
 </p> 
 
 
