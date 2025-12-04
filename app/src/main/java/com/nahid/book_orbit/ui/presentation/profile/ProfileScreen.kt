@@ -1,6 +1,9 @@
 package com.nahid.book_orbit.ui.presentation.profile
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,12 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
 import com.nahid.book_orbit.ui.theme.Typography
 import com.nahid.book_orbit.ui.theme.White
+import java.io.File
+import androidx.core.net.toUri
 
+private const val TAG = "ProfileScreen"
 @Composable
 fun ProfileScreen(
     sharedViewModel: MainViewModel,
@@ -116,12 +123,14 @@ fun ProfileScreen(
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     ),
-                    modifier = Modifier.padding(
-                        start = 34.dp,
-                        bottom = (AppConstants.APP_MARGIN).dp
-                    ).clickable{
-                        toTermsAndCondition()
-                    }
+                    modifier = Modifier
+                        .padding(
+                            start = 34.dp,
+                            bottom = (AppConstants.APP_MARGIN).dp
+                        )
+                        .clickable {
+                            toTermsAndCondition()
+                        }
                 )
                 Text(
                     "Privacy Policy",
@@ -164,7 +173,7 @@ fun ProfileScreen(
                         fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier
-                        /*.clickable {
+                        .clickable {
                             val sendIntent: Intent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(
@@ -176,7 +185,7 @@ fun ProfileScreen(
                             val shareIntent =
                                 Intent.createChooser(sendIntent, "Share Book Orbit App")
                             context.startActivity(shareIntent)
-                        }*/
+                        }
                         .padding(
                             start = 34.dp,
                             bottom = (AppConstants.APP_MARGIN).dp
@@ -188,11 +197,31 @@ fun ProfileScreen(
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     ),
-                    modifier = Modifier.padding(
-                        start = 34.dp,
-                        top = 4.dp,
-                        bottom = (AppConstants.APP_MARGIN).dp
-                    )
+                    modifier = Modifier
+                        .padding(
+                            start = 34.dp,
+                            top = 4.dp,
+                            bottom = (AppConstants.APP_MARGIN).dp
+                        )
+                        .clickable {
+                            val appPackageName = context.packageName
+                            try {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        "market://details?id=$appPackageName".toUri()
+                                    )
+                                )
+                            } catch (e: ActivityNotFoundException) {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        "https://play.google.com/store/apps/details?id=$appPackageName".toUri()
+                                    )
+                                )
+                            }
+
+                        }
                 )
                 HorizontalDivider(
                     thickness = 1.dp,
