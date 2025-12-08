@@ -2,8 +2,6 @@ package com.nahid.book_orbit.ui.presentation.profile
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Logout
@@ -29,14 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.nahid.book_orbit.core.utils.AppConstants
 import com.nahid.book_orbit.ui.presentation.main.MainViewModel
 import com.nahid.book_orbit.ui.theme.Black
 import com.nahid.book_orbit.ui.theme.Typography
 import com.nahid.book_orbit.ui.theme.White
-import java.io.File
-import androidx.core.net.toUri
 
 private const val TAG = "ProfileScreen"
 @Composable
@@ -57,6 +55,7 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = (AppConstants.APP_MARGIN).dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height((AppConstants.APP_MARGIN * 4).dp))
             Icon(
@@ -231,6 +230,7 @@ fun ProfileScreen(
                     )
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 "\u00A9 Book Orbit",
                 style = Typography.bodyLarge.copy(
